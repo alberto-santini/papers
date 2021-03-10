@@ -97,7 +97,6 @@
         \ifcsname @asvolume\endcsname ~(vol.~\@asvolume)\fi
         \ifcsname @aspages\endcsname , pp.~\@aspages\fi
         ~(\@asyear).
-        \ifcsname @asdoi\endcsname ~DOI: {\tt \@asdoi}\fi
     \end{paracol}
     
     \vspace{1em}
