@@ -1,0 +1,43 @@
+\begin{table}\centering%
+    \begin{tabular}{@{}lccc@{}}
+        \toprule
+        {\bf cabinet} & {\bf \#shelves} & {\bf \#short shelves} & {\bf \#tall shelves} \\
+        \midrule
+        small  &  7 & 5 & 2 \\
+        medium &  9 & 6 & 3 \\
+        large  & 12 & 8 & 4 \\
+        \bottomrule
+    \end{tabular}
+    \caption{%
+        Features of the three types of cabinet considered.
+        Column~\emph{cabinet} is the cabinet type.
+        Column~\emph{\#shelves} report the total number of shelves in the cabinet, which is made up of the number of short and tall shelves, reported respectively in columns~\emph{\#short shelves} and \emph{\#tall shelves}.
+        \label{tbl:cabinets}
+    }
+\end{table}
+
+\begin{table}\centering%
+    \begin{tabular}{@{}lccll@{}}
+        \toprule
+        {\bf crop} & {\bf total growth time} & {\bf \#growth phases} & {\bf shares config with} & {\bf shelf type} \\
+        \midrule
+        A & 64 & 3 & ---     & tall \\
+        B & 15 & 2 & C, F    & short, tall \\
+        C & 15 & 2 & B, F    & short, tall \\
+        D & 44 & 5 & F       & short, tall \\
+        E & 35 & 4 & ---     & short, tall \\
+        F & 35 & 4 & B, C, D & short, tall \\
+        \bottomrule        
+    \end{tabular}
+    \caption{%
+        Real-life data about the crops that we used as a base for instance generation.
+        Column~\emph{crop} is the crop identifier.
+        Column~\emph{total growth time} gives the total time in days that the crop needs to be in the cabinet (quantity \(\gamma_c\)).
+        Column~\emph{\#growth phases} is the number of different growth phases the crop goes through; each growth phase requires a different configuration.
+        Column~\emph{shares config with} indicates which other crops
+        have at least one required configuration in common with
+        the considered crop (recall that crops which have common configurations can share the same shelf).
+        Column~\emph{shelf type} states whether a crop can grow in any shelf or requires a tall one.
+        \label{tbl:basedata}%
+    }
+\end{table}

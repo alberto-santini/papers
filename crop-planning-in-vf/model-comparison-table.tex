@@ -1,0 +1,77 @@
+\begin{sidewaystable}\centering\scriptsize%
+    \resizebox{\textwidth}{!}{%
+    \setlength{\tabcolsep}{3pt}
+    \begin{tabular}{ll r rrrr rrrr rrrr rrrr}
+        \toprule
+
+        \multicolumn{2}{c}{\bf parameter} &
+        {\bf instances} &
+        \multicolumn{4}{c}{\bf MinM} &
+        \multicolumn{4}{c}{\bf MinR} &
+        \multicolumn{4}{c}{\bf MinS} &
+        \multicolumn{4}{c}{\bf MinUD} \\
+
+        \cmidrule(lr){1-2}
+        \cmidrule(lr){3-3}
+        \cmidrule(lr){4-7}
+        \cmidrule(lr){8-11}
+        \cmidrule(lr){12-15}
+        \cmidrule(lr){16-19}
+
+        {\bf name} & {\bf value} & &
+        {\bf\%feas} & {\bf\%opt} & {\bf\%gap} & {\bf time} &
+        {\bf\%feas} & {\bf\%opt} & {\bf\%gap} & {\bf time} &
+        {\bf\%feas} & {\bf\%opt} & {\bf\%gap} & {\bf time} &
+        {\bf\%feas} & {\bf\%opt} & {\bf\%gap} & {\bf time} \\
+        
+
+        \midrule
+
+        \#crops &
+        1 & 178 & 28.65 & 15.17 & 28.69 & 1899.30 & 61.80 & 56.74 & 6.80 & 11.99 & 100.00 & 100.00 & 0.00 & 5.89 & 100.00 & 100.00 & 0.00 & 0.71 \\
+        & 2 & 442 & 37.56 & 2.71 & 79.40 & 3400.08 & 75.11 & 69.00 & 5.21 & 72.49 & 98.42 & 82.58 & 0.37 & 714.17 & 100.00 & 99.32 & 0.09 & 28.76 \\
+        & 3 & 489 & 40.70 & 0.20 & 95.33 & 3600.00 & 74.85 & 71.17 & 2.30 & 172.69 & 98.98 & 45.40 & 2.68 & 2141.60 & 100.00 & 97.96 & 0.24 & 93.58 \\
+        & 4 & 264 & 40.91 & 0.00 & 98.35 & 3600.00 & 75.00 & 72.35 & 0.94 & 209.26 & 97.73 & 12.50 & 7.06 & 3264.14 & 100.00 & 96.97 & 0.29 & 157.99 \\
+        & 5 & 61 & 22.95 & 0.00 & 96.69 & 3600.00 & 85.25 & 81.97 & 1.13 & 417.50 & 98.36 & 1.64 & 10.76 & 3589.91 & 100.00 & 93.44 & 0.56 & 387.86 \\
+        & 6 & 7 & 0.00 & 0.00 & --- & 3600.00 & 100.00 & 85.71 & 3.57 & 753.95 & 100.00 & 0.00 & 15.96 & 3600.00 & 100.00 & 85.71 & 1.19 & 558.28 \\
+
+
+        \midrule
+
+        cabinet&
+        small & 391 & 41.43 & 4.35 & 75.60 & 3273.87 & 70.33 & 67.52 & 1.99 & 18.29 & 98.72 & 59.59 & 3.12 & 1591.38 & 100.00 & 99.49 & 0.08 & 32.86 \\
+        & medium & 475 & 42.74 & 2.95 & 87.15 & 3393.94 & 72.42 & 68.00 & 5.60 & 53.88 & 98.53 & 53.89 & 3.00 & 1767.17 & 100.00 & 98.95 & 0.13 & 57.25 \\
+        & large & 575 & 30.09 & 1.57 & 90.46 & 3497.95 & 77.57 & 72.00 & 2.49 & 299.21 & 98.78 & 53.91 & 2.52 & 1742.44 & 100.00 & 96.70 & 0.33 & 152.76 \\
+
+        \midrule
+
+        demand mult &
+        1.0 & 311 & 50.80 & 3.54 & 86.58 & 3399.20 & 63.02 & 60.13 & 2.82 & 147.99 & 98.39 & 40.51 & 6.26 & 2250.36 & 100.00 & 98.07 & 0.19 & 96.42 \\
+        & 1.2 & 304 & 46.71 & 3.29 & 86.16 & 3429.93 & 65.79 & 61.18 & 4.92 & 166.05 & 97.37 & 48.68 & 3.52 & 1916.93 & 100.00 & 97.37 & 0.28 & 120.99 \\
+        & 1.4 & 273 & 38.10 & 1.83 & 88.00 & 3467.99 & 75.09 & 71.43 & 3.76 & 94.55 & 98.90 & 56.04 & 2.12 & 1729.95 & 100.00 & 98.53 & 0.15 & 84.04 \\
+        & 1.6 & 218 & 27.52 & 1.83 & 83.51 & 3393.07 & 82.11 & 78.44 & 2.61 & 140.36 & 100.00 & 62.39 & 1.41 & 1467.36 & 100.00 & 99.54 & 0.07 & 43.78 \\
+        & 1.8 & 206 & 23.30 & 3.88 & 75.83 & 3106.17 & 81.07 & 74.27 & 3.19 & 157.94 & 99.51 & 65.53 & 0.80 & 1360.96 & 100.00 & 96.60 & 0.37 & 134.90 \\
+        & 2.0 & 129 & 20.16 & 1.55 & 72.06 & 3346.49 & 91.47 & 84.50 & 2.37 & 202.66 & 98.45 & 78.29 & 0.29 & 858.51 & 100.00 & 100.00 & 0.00 & 6.46 \\
+
+        \midrule
+
+        time horizon &
+        60 & 461 & 42.52 & 2.60 & 86.56 & 3432.42 & 79.39 & 78.09 & 1.14 & 43.57 & 99.78 & 74.40 & 1.45 & 1051.89 & 100.00 & 98.92 & 0.13 & 56.38 \\
+        &  80 & 589 & 39.05 & 3.57 & 84.38 & 3340.80 & 70.63 & 65.87 & 4.14 & 119.48 & 98.30 & 53.99 & 2.78 & 1771.87 & 100.00 & 97.45 & 0.26 & 108.92 \\
+        & 100 & 391 & 28.64 & 1.79 & 82.28 & 3422.71 & 72.38 & 64.71 & 5.11 & 322.84 & 97.95 & 35.29 & 4.60 & 2405.31 & 100.00 & 98.47 & 0.17 & 96.49 \\
+
+        \midrule
+
+        \multicolumn{2}{l}{Overall} & 1441 & 37.34 & 2.78 & 84.74 & 3391.23 & 73.91 & 69.47 & 3.37 & 147.43 & 98.68 & 55.45 & 2.84 & 1709.58 & 100.00 & 98.20 & 0.19 & 88.74 \\
+
+        \bottomrule
+    \end{tabular}}
+    \caption{%
+        Performance comparison of the four models for varying instance parameters.
+        Column \emph{instances} reports how many instances, out of those identified as feasible in \Cref{ssec:instances}, correspond to the setting specified under \emph{parameter}.
+        Column \emph{\%feas} indicates the number of instances (in percent) for which the model produced a feasible solution.
+        Column \emph{\%opt} lists the number of instances solved to optimality  in percent.
+        Column \emph{\%gap} reports the average optimality gap in percent, and column \emph{time} is the average solution time in seconds.
+        The last two columns are computed based on the instances with a feasible solution found within the time limit.%
+    }\label{tbl:model_performance}
+\end{sidewaystable}

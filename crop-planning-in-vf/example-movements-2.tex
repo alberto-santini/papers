@@ -1,0 +1,36 @@
+\resizebox{0.9\textwidth}{!}{%
+\tikzset{>=latex}
+\begin{tikzpicture}
+    \foreach \x in {0,...,3}
+        \node at (2 * \x, 8) {\(d=\x\)};
+
+    \node at (-2, 6) {\(\sigma\)};
+
+    \foreach \y in {1,...,2} {
+        \pgfmathtruncatemacro{\ylabel}{3-\y}
+        \node at (-2, 2 * \y) {shelf \ylabel};
+    };
+
+    \draw[decorate,decoration={brace,amplitude=10pt,mirror},xshift=.4cm] (-3, 4.2) -- (-3, 1.8) node[black,midway,xshift=-1cm] {type 1};
+
+    \node at (-2, 0) {\(\tau\)};
+
+    \foreach \x in {0,...,3}
+        \foreach \y in {0,...,3}
+            \draw[black,fill=black] (2 * \x, 2 * \y) circle (.5ex) node (p\x\y) {};
+
+    \path[->,dashed]
+        (p03) edge (p12)
+        (p12) edge (p22)
+        (p22) edge (p30);
+
+    \path[->,dotted]
+        (p03) edge (p11)
+        (p11) edge (p21)
+        (p21) edge (p30);
+
+    \node[below left=-.1cm and -.3cm of p12] {\small \(k_1\)};
+    \node[below left=-.1cm and -.3cm of p11] {\small \(k_1\)};
+    \node[below left=-.1cm and -.3cm of p22] {\small \(k_2\)};
+    \node[below left=-.1cm and -.3cm of p21] {\small \(k_3\)};
+\end{tikzpicture}}

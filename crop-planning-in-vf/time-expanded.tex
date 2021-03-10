@@ -1,0 +1,43 @@
+\resizebox{0.75\textwidth}{!}{%
+\tikzset{>=latex}
+\begin{tikzpicture}
+    \foreach \x in {0,...,7}
+        \node at (2 * \x, 10) {\(d=\x\)};
+
+    \node at (-2, 8) {\(\sigma\)};
+
+    \foreach \y in {1,...,3} {
+        \pgfmathtruncatemacro{\ylabel}{4-\y}
+        \node at (-2, 2 * \y) {type \ylabel};
+    };
+
+    \node at (-2, 0) {\(\tau\)};
+
+    \foreach \x in {0,...,7}
+        \foreach \y in {0,...,4}
+            \draw[black,fill=black] (2 * \x, 2 * \y) circle (.5ex) node (p\x\y) {};
+
+    \path[->,dashed]
+        (p04) edge (p13)
+        (p13) edge (p23)
+        (p23) edge (p33)
+        (p33) edge (p41)
+        (p41) edge (p51)
+        (p51) edge (p60);
+
+    \path[->,dotted]
+        (p24) edge (p33)
+        (p33) edge (p43)
+        (p43) edge (p52)
+        (p52) edge (p62)
+        (p62) edge (p70);
+
+    \node[below left=-.1cm and -.3cm of p13] {\small \(k_1\)};
+    \node[below left=-.1cm and -.3cm of p23] {\small \(k_1\)};
+    \node[below left=-.1cm and -.3cm of p33] {\small \(k_1\)};
+    \node[below left=-.1cm and -.3cm of p43] {\small \(k_1\)};
+    \node[below left=-.1cm and -.3cm of p41] {\small \(k_2\)};
+    \node[below left=-.1cm and -.3cm of p51] {\small \(k_2\)};
+    \node[below left=-.1cm and -.3cm of p52] {\small \(k_3\)};
+    \node[below left=-.1cm and -.3cm of p62] {\small \(k_3\)};
+\end{tikzpicture}}
