@@ -170,9 +170,6 @@ where each $\rho_i$ is taken randomly from the intervals $[-3,-1]\cup[1,3]$.
 Column ``Acceptance Criterion'' shows the acceptance criteria, column ``Score'' gives the value of $S_{\alpha^*}$ for the best parameter assignment $\alpha^* \in \mathcal{P}$, while column ``Parameters'' gives the values of the parameters in $\alpha^*$, using the same notation as in \Cref{sec:acceptance_criteria}.
 The maximum number of tuning iterations has been set to $M = 20$, the number of reruns to $\lambda = 10$ and the number of iterations of each run (exit criterion) to 150,000.
 
-% When the number of parameters is less than three, it is also possible to easily visualise the progress of the parameter tuning algorithm, constructing a heat map with the score of each parameter assignment.
-% \Cref{fig:example_tuning} shows such an example, for CVRP with the acceptance criterion Linear Record-to-Record Travel, where the horizontal axis represents the values of $T^\textup{start}$ and vertical axis represents $T^\textup{end}$.
-
 \begin{sidewaystable}\centering\scriptsize
     \begin{tabular}{l lL{5cm} lL{5cm}}
         \toprule
@@ -238,8 +235,3 @@ The maximum number of tuning iterations has been set to $M = 20$, the number of 
     \end{tabular}
     \caption{Parameter tuning results sumamry for Simple CVRP and QAP.}\label{tbl:par_tuning_summary2}
 \end{sidewaystable}
-
-% \begin{figure}
-% \includegraphics[trim={1.8cm 10cm 2cm 1.5cm},clip,width=\textwidth]{figures/paramTuning-cvrp-rr.pdf}
-%   \caption{Parameter tuning heatmap for CVRP and acceptance criterion ``Linear RRT''. The horizontal and vertical axes represent, respectively, parameters $T^\textup{start}$ and $T^\textup{end}$. The tuning algorithm only attempted parameter configurations indicated by the filled cells. Each filled entry reports average deviation $S_\alpha$ (in percentage) for the corresponding parameter assignment $\alpha$, and the cells are colored according to average deviation with green cells indicating the best results. Notice that labels on both axes are unevenly distributed and that the tuning algorithms attempts some parameter configuration where the initial threshold is larger than the final threshold.}\label{fig:example_tuning}
-% \end{figure}
