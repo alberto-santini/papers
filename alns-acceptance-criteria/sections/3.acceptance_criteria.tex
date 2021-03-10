@@ -75,7 +75,7 @@ At the other end of the spectrum from HC, there is Random Walk (RW), presented i
 
 This criterion, presented in \Cref{alg:lahc}, is similar to HC, but the new solution is compared to what was the current solution $L$ iterations ago.
 In order to implement this acceptance criterion, it is necessary to keep a circular list of length $L$ that stores the last $L$ current solutions.
-The criterion was first introduced by \citet{burke2008late,burke2012late}.
+The criterion was first introduced by \autocite{burke2008late,burke2012late}.
 
 \begin{algorithm}[ht]
   \caption{Late Acceptance Hill Climbing}\label{alg:lahc}
@@ -112,12 +112,12 @@ This acceptance criterion only uses parameter: the length $L$ of the look-back l
 %\paragraph{Variants}
 \emph{Variants:}
 The standard version of this acceptance criterion would not accept the \rev{new solution} in case $f(x_{i-L}) < f(x') < f(x)$.
-As proposed by \citet{burke2012late}, the criterion can be emended to accept $x'$ if \emph{either} it is better than the current solution $L$ iterations ago, \emph{or} it is better than the current solution at the present iteration.
+As proposed by \autocite{burke2012late}, the criterion can be emended to accept $x'$ if \emph{either} it is better than the current solution $L$ iterations ago, \emph{or} it is better than the current solution at the present iteration.
 In this variant, called \textbf{Improved LAHC}, we edit line \ref{ln:late_acceptance} to become $f(x') \leq f(x_{i-L}) \; \vee \; f(x') \leq f(x)$ (where $\vee$ denotes logical or).
 
 \subsection{Threshold Acceptance}
 
-With the Threshold Acceptance (TA) criterion introduced by \citet{dueck1990threshold} and presented in \Cref{alg:ta}, a \rev{new} solution is accepted if the gap between the \rev{new} and the current solution is smaller than a threshold $T$.
+With the Threshold Acceptance (TA) criterion introduced by \autocite{dueck1990threshold} and presented in \Cref{alg:ta}, a \rev{new} solution is accepted if the gap between the \rev{new} and the current solution is smaller than a threshold $T$.
 The threshold starts at a large value and decreases at every iteration.
 
 \begin{algorithm}[ht]
@@ -161,7 +161,7 @@ In the second case, the \textbf{Exponential Threshold Acceptance} method, we upd
 \subsection{Simulated Annealing}\label{ssec:sa}
 
 Simulated Annealing (SA), presented in \Cref{alg:sa}, is the acceptance criterion most commonly used within the ALNS framework.
-It was originally introduced by \citet{kirkpatrick1983optimization} and it was used with the ALNS since its debut by \citet{ropke2006adaptive}.
+It was originally introduced by \autocite{kirkpatrick1983optimization} and it was used with the ALNS since its debut by \autocite{ropke2006adaptive}.
 The basic idea behind SA is similar to TA: moves to solutions that are worse than the current one are allowed, but the probability of doing so depends on the state of the search and on the gap between $f(x)$ and $f(x')$.
 
 \begin{algorithm}[ht]
@@ -212,19 +212,19 @@ The corresponding start and end temperatures $T^\textup{start}$ and $T^\textup{e
 It remains an open question how to choose the reference value $z$.
 One option is to use the initial solution: $z = f(x_0)$.
 The parameter $T$ should then be initialised as $T^\textup{start}$ and then updated at every iteration, as $T \leftarrow T \cdot (T^\textup{end}/T^\textup{start})^{1/K}$.
-We refer to this method, introduced as the default acceptance criterion for ALNS by \citet{ropke2006adaptive}, simply as \textbf{Exponential Simulated Annealing}.
-A variant of this method has been proposed by \citet{pisinger2007general}, where the authors noticed that the start and end temperature values can be sensitive to the size of the instance.
+We refer to this method, introduced as the default acceptance criterion for ALNS by \autocite{ropke2006adaptive}, simply as \textbf{Exponential Simulated Annealing}.
+A variant of this method has been proposed by \autocite{pisinger2007general}, where the authors noticed that the start and end temperature values can be sensitive to the size of the instance.
 How this \emph{size} is defined is problem dependent (for example, it can be the number of customers in a Vehicle Routing Problem).
 In the following we just assume that it is a positive real number $s \geq 1$ .
 In the variant of SA that we called \textbf{Instance-Scaled Exponential Simulated Annealing}, we divide the start and end temperature by a coefficient $s^M$, where $M \in \mathbb{N}$ is a parameter.
-Since \citet{pisinger2007general} only considered the case where $M = 1$, we take this as the base case upon which we build the following additional variations.
+Since \autocite{pisinger2007general} only considered the case where $M = 1$, we take this as the base case upon which we build the following additional variations.
 The first variation builds on the observation that the best known solution at a certain iteration could be much better than the initial one.
 Therefore, the reference value $z$ can be updated every time the best solution value improves, as $T^\textup{end} = (f(x^*) \cdot (1-h)) / \ln 0.5$.
 This variant, which we call \textbf{Exponential Simulated Annealing With Adaptive Probability} coincides with the base method if the value of the initial solution is never improved.
 Similarly to what we did for TA, we also considered a version of SA where the decrease between start and end temperature is linear.
 We named this version \textbf{Linear Simulated Annealing}.
 The update function for $T$ is $T \leftarrow T - (T^\textup{start} - T^\textup{end})/K$.
-Another common variant is SA with reheating, discussed by \citet{connolly1992general}.
+Another common variant is SA with reheating, discussed by \autocite{connolly1992general}.
 Reheating is used to escape local minima in later phases of the exploration, when the temperature is too small to accept a (worsening) diversifying solution.
 In our implementation we perform reheating a fixed number of times $R$.
 When reheating occurs, the temperature is set to the temperature $T^*$ recorded the last time the best solution was improved, multiplied by a coefficient $r > 1$:
@@ -236,7 +236,7 @@ On top of the parameters $h^\textup{start}$ and $h^\textup{end}$, this variant h
 
 \subsection{Great Deluge}\label{ssec:gd}
 
-With the Great Deluge (GD) criterion, introduced by \citet{dueck1993new} and presented in \Cref{alg:gd}, a \rev{new} solution is accepted only if its cost is smaller than a threshold, called the \emph{water level}.
+With the Great Deluge (GD) criterion, introduced by \autocite{dueck1993new} and presented in \Cref{alg:gd}, a \rev{new} solution is accepted only if its cost is smaller than a threshold, called the \emph{water level}.
 The water level starts at a high value and decreases at each iteration.
 
 \begin{algorithm}[ht]
@@ -276,7 +276,7 @@ The water level is then decreased at each iteration, $W \leftarrow W - \beta (W 
 
 The Non-Linear Great Deluge criterion (NLGD), presented in \Cref{alg:nlgd}, builds on the same idea of the GD, with a few variations.
 The water level decreases more quickly in the beginning of the search process, more slowly towards the end, and can also increase.
-The NLGD was introduced by \citet{landa2008great} for a course timetabling problem;
+The NLGD was introduced by \autocite{landa2008great} for a course timetabling problem;
 in our implementation we change some of the fixed values, which the authors tuned for their specific problem, and we replace them with parameters.
 
 \begin{algorithm}[ht]
@@ -378,7 +378,7 @@ This probability is higher at the beginning and smaller at the end of the soluti
 
 This criteria is particularly suited in cases when the objective value of the problem typically holds a few discrete values, and passing from a value to the next better one is a relatively rare occurrence.
 An example of such a problem is the Vertex Colouring Problem (VCP), in which one has to produce a colouring of a graph, using the smallest number of colours.
-WA was employed as the acceptance criterion in an ALNS-based metaheuristic for the Partition Colouring Problem (a generalisation of the VCP) by \citet{furini2016branch}.
+WA was employed as the acceptance criterion in an ALNS-based metaheuristic for the Partition Colouring Problem (a generalisation of the VCP) by \autocite{furini2016branch}.
 
 \begin{algorithm}[ht]
   \caption{Worse Accept}\label{alg:wa}

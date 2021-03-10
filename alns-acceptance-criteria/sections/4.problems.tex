@@ -13,7 +13,7 @@ Each customer $i \in C$ has an associated demand $q_i \geq 0$ and the vehicles a
 
 In the literature on heuristics for the CVRP, researchers have typically also considered instances that include a distance or duration limit for each route.
 In the standard benchmark instances, customers have a service time and for each route the sum of service times plus distance driven has to be less than or equal to a threshold $L$.
-For more information the reader is referred to \citet{irnich2014family} and \citet{laporte2014heuristics}.
+For more information the reader is referred to \autocite{irnich2014family} and \autocite{laporte2014heuristics}.
 
 \subsection{Capacitated Minimum Spanning Tree Problem}
 
@@ -25,7 +25,7 @@ The remaining nodes $i \in N \setminus \left\{ 0 \right\}$ are associated with a
 Removing node 0 from any spanning tree results in the tree splitting into one or more connected components.
 In the CMST, the solution has to satisfy the property that the sum of the demands of each component (or sub-tree) is less than or equal to $Q$ (capacity constraints).
 We seek the spanning tree that minimizes the sum of edge costs while satisfying capacity constraints.
-For more information on this problem, see \citet{uchoa2008robust}.
+For more information on this problem, see \autocite{uchoa2008robust}.
 
 \subsection{Quadratic Assignment Problem}
 
@@ -35,5 +35,5 @@ For more information on this problem, see \citet{uchoa2008robust}.
 \rev{The Quadratic Assignment Problem (QAP) is an extension of the LAP, where the costs are associated to pairs of assignments:}
 \rev{we are given $n^4$ costs, with $c_{ijkl}$ corresponding to the simultaneous assignment of facility $i$ to location $j$, and facility $k$ to location $l$.}
 \rev{A cost can be thought of as $c_{ijkl} = f_{ik} d_{jl}$ where $f_{ik}$ is the flow to be sent from facility $i$ to facility $k$, and $d_{jl}$ is the distance between location $j$ and location $l$.}
-\rev{More information about this problem can be found in the seminal paper by \citet{lawler1963quadratic}.}
-\rev{For works on metaheuristics for the QAP see, e.g., \citet{stutzle2006iterated,james2009multistart}.}
+\rev{More information about this problem can be found in the seminal paper by \autocite{lawler1963quadratic}.}
+\rev{For works on metaheuristics for the QAP see, e.g., \autocite{stutzle2006iterated,james2009multistart}.}

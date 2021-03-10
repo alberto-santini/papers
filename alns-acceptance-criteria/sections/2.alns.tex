@@ -1,6 +1,6 @@
 \section{The ALNS Framework}\label{sec:alns}
 
-ALNS was introduced by \citet{ropke2006adaptive} and extends the LNS metaheuristic first proposed by \citet{Shaw98}.
+ALNS was introduced by \autocite{ropke2006adaptive} and extends the LNS metaheuristic first proposed by \autocite{Shaw98}.
 In the LNS, we consider a neighbourhood which is \rev{implicitly} defined by the sequential application of a \emph{destroy} and a \emph{repair} method.
 A destroy method turns a feasible solution into an incomplete solution, by destroying parts of it;
 a repair method then takes an incomplete solution and turns it into a feasible solution.
@@ -66,11 +66,11 @@ In our implementation, the solution process ends when we reach a predetermined n
 Other criteria that have been used include a hard time limit, and a predetermined number of consecutive iterations without improvement.
 
 \secrev{
-The LNS and ALNS has similarities to the method known as iterated greedy, first proposed by \citet{RuSt07}.
+The LNS and ALNS has similarities to the method known as iterated greedy, first proposed by \autocite{RuSt07}.
 That first implementation of iterated greedy only uses a single destroy method (based on random removal) and a single repair method.
 As opposed to ALNS, it explicitly includes an optional local search improvement phase.
-\citet{Gl00} points out that alternating constructive and destructive phases corresponds to a one-sided strategic oscillation.
-Strategic oscillation refers to a process where a search is strategically driven to go back and forth between the set of feasible solutions and a set of infeasible solutions \citep{GlLa97}.
+\autocite{Gl00} points out that alternating constructive and destructive phases corresponds to a one-sided strategic oscillation.
+Strategic oscillation refers to a process where a search is strategically driven to go back and forth between the set of feasible solutions and a set of infeasible solutions \parencite{GlLa97}.
 In this context, destroy methods create infeasible solutions, and the repair methods drive the resulting infeasible solution towards a feasible solution.
-Finally, the ruin and recreate heuristic, proposed in \citep{Schrimpf00} is also very similar to LNS and ALNS in the sense that it improves an initial solution by repeatedly destroying (ruining) and repairing (recreating) the current solution.
+Finally, the ruin and recreate heuristic, proposed in \parencite{Schrimpf00} is also very similar to LNS and ALNS in the sense that it improves an initial solution by repeatedly destroying (ruining) and repairing (recreating) the current solution.
 }

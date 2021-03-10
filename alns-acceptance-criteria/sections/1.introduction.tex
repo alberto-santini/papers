@@ -1,11 +1,11 @@
 \section{Introduction}\label{sec:introduction}
 
-The Adaptive Large Neighborhood Search (ALNS) metaheuristic \citep{ropke2006adaptive} has become a popular template for implementing heuristic solution methods, especially for vehicle routing applications \citep{demir2012adaptive, grangier2016adaptive, hemmelmayr2012adaptive, muller2012hybrid, ribeiro2012adaptive}.
+The Adaptive Large Neighborhood Search (ALNS) metaheuristic \parencite{ropke2006adaptive} has become a popular template for implementing heuristic solution methods, especially for vehicle routing applications \parencite{demir2012adaptive, grangier2016adaptive, hemmelmayr2012adaptive, muller2012hybrid, ribeiro2012adaptive}.
 The metaheuristic allows the use of problem specific knowledge when specifying operators for partially destroying and then repairing a solution to an optimisation problem.
 Problem independent components of the ALNS dictate how different destroy and repair operators are used and control the search trajectory.
 One presumably important component that influences the search trajectory is the move acceptance criterion.
-In the original ALNS, this criterion was based on Simulated Annealing \citep{ropke2006adaptive}, whereas earlier work on Large Neighborhood Search (LNS) by \citet{Shaw98} accepted only improving solutions.
-Recently, some implementations have used the Record-to-Record Travel acceptance criterion instead \citep{Lei2011}, and in one case it was found to perform better than the standard Simulated Annealing criterion \citep{Hemmati2016}.
+In the original ALNS, this criterion was based on Simulated Annealing \parencite{ropke2006adaptive}, whereas earlier work on Large Neighborhood Search (LNS) by \autocite{Shaw98} accepted only improving solutions.
+Recently, some implementations have used the Record-to-Record Travel acceptance criterion instead \parencite{Lei2011}, and in one case it was found to perform better than the standard Simulated Annealing criterion \parencite{Hemmati2016}.
 
 Currently, however, there are no guidelines available to recommend one acceptance criterion over another.
 This paper intends to fill this gap by investigating a large number of different move acceptance criteria by subjecting them to extensive computational testing.

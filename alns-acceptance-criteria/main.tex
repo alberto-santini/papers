@@ -1,13 +1,14 @@
 \documentclass{as-preprint-template}
 
+\usepackage{fontspec} % Required due to a bug in microtype
 \usepackage{amsmath,amsfonts}
 \usepackage{breakcites}
 \usepackage{graphicx}
 \usepackage[nameinlink,capitalise]{cleveref}
 
 % Bibliography
-\usepackage{natbib}
-\bibliographystyle{plainnat}
+\usepackage[backend=biber,style=authoryear,dashed=false,maxbibnames=99,citestyle=authoryear,hyperref=true]{biblatex}
+\addbibresource{bibliography.bib}
 
 % Algorithm
 \usepackage[algoruled,linesnumbered]{algorithm2e}
@@ -76,6 +77,5 @@
   \input{sections/7.results.tex}
   \input{sections/8.conclusions.tex}
 
-  \section*{Bibliography}
-	\bibliography{bibliography}
+  \printbibliography
 \end{document}
