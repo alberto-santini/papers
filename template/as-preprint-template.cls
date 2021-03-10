@@ -7,6 +7,7 @@
 \RequirePackage{microtype}
 \RequirePackage{authblk}
 \RequirePackage{paracol}
+\RequirePackage{url}
 \RequirePackage[hidelinks]{hyperref}
 \RequirePackage{xcolor}
 
@@ -26,6 +27,9 @@
 
 % Note: I am not sure why I cannot inherit the four things above from the article
 % class or if loading geometry is going to change them (and why or why not)!
+
+% Choose font for \tt:
+\RequirePackage[scaled=.7]{beramono}
 
 % Command to add an author with their affiliation.
 % I first define a counter for the authors.
@@ -101,16 +105,28 @@
     
     \vspace{1em}
     
-    The final version is available at: \url{\@asurl}
+    The final version is available at:\\
+    \url{\@asurl}
     
     \vspace{3em}
     
     You can cite the final version of this paper as:
-        
+    
+    \setcounter{coverauthn}{1}
     {\tt%
         @article\{\@nameuse{@asauthorlast1}\@asyear,\\
             \-\quad title=\{\@astitle\},\\
             \-\quad journal=\{\@asjournal\},\\
+            \-\quad author=\{%
+            \@whilenum{\value{coverauthn}<\value{authorn}}\do{%
+                \@nameuse{@asauthorlast\thecoverauthn}, \@nameuse{@asauthorfirst\thecoverauthn}%
+                \stepcounter{coverauthn}%
+                \ifnum\thecoverauthn=\theauthorn%
+                    % Nothing
+                \else%
+                    ~and
+                \fi%
+            }\},\\
             \ifcsname @asvolume\endcsname%
             \-\quad volume=\{\@asvolume\},\\
             \fi
