@@ -1,0 +1,76 @@
+\section{The ALNS Framework}\label{sec:alns}
+
+ALNS was introduced by \citet{ropke2006adaptive} and extends the LNS metaheuristic first proposed by \citet{Shaw98}.
+In the LNS, we consider a neighbourhood which is \rev{implicitly} defined by the sequential application of a \emph{destroy} and a \emph{repair} method.
+A destroy method turns a feasible solution into an incomplete solution, by destroying parts of it;
+a repair method then takes an incomplete solution and turns it into a feasible solution.
+In ALNS, we consider a collection of destroy and repair methods.
+A neighbourhood is implicitly defined for each possible pair of destroy and repair methods, assuming that any repair method is able to reconstruct a solution from an incomplete solution created by any destroy method.
+
+\rev{For example, a destroy method for a Vehicle Routing Problem could remove a certain number of customers from their respective routes.}
+\rev{A repair method could then try to re-insert the missing customers, trying all feasible positions and choosing the one that minimises the total cost.}
+
+Some element of randomness is commonly introduced in the process.
+This element is usually included in the destroy method, by randomising the choice of which parts of the solution to destroy.
+In most implementations, the repair methods aim to, myopically, obtain the best possible solution starting from an incomplete solution;
+however, it is also possible to introduce some stochastic element in the repair methods.
+At each iteration, the destroy and repair methods are chosen based on their past performance, reflected by a score:
+the methods are picked with a roulette-wheel selection, where the probabilities are directly proportional to the scores.
+Initially all methods are assigned the same score.
+
+\begin{algorithm}[H]
+  \caption{General Framework}\nllabel{alg:general_fw}
+  \SetKwInOut{Input}{Input}
+
+  \Input{Initial solution: $x_0$}
+  \Input{Initial acceptance parameters}
+  \Input{Initial destroy/repair scores}
+
+  $x = x_0$\tcc*{Initialise current solution}
+  $x^* = x_0$\tcc*{Initialise best solution}
+  $i=1$\tcc*{Iteration count}
+
+  \While{$i \leq K$}{
+    Choose a destroy method $d$\;
+    Choose a repair method $r$\;
+    $x' \leftarrow r(d(x))$\;
+    \If{Accept new solution $x'$}{ \nllabel{ln:accept}
+      $x = x'$
+    }
+
+    \If{$f(x) < f(x^*)$}{
+      $x^* = x$
+    }
+
+    Update(Destroy/repair scores)\; \nllabel{ln:update_sco}
+    Update(Acceptance parameters)\; \nllabel{ln:update_acc}
+    $i = i + 1$
+  }
+
+  \Return $x^*$
+\end{algorithm}
+
+A synthetic formulation of the ALNS algorithm is given in \Cref{alg:general_fw}.
+Once the destroy and repair methods are chosen, a new solution is produced.
+The algorithm then has to decide whether or not to replace the \emph{current} solution with the one newly produced --- thus \emph{accepting} or \emph{rejecting} the new solution.
+The criterion used to decide whether or not the \rev{new solution} is accepted is therefore called the \emph{acceptance criterion}.
+The criterion itself can base the acceptance decision on some internal state, which can vary during the course of the solution process.
+For example, a Simulated Annealing (SA) criterion has been the most popular choice when implementing ALNS:
+in the case of SA, the varying state is represented by the temperature, which starts at a high value and exponentially decreases during the execution of the algorithm.
+
+When the \rev{new solution} improves on the global best solution, the scores of the corresponding destroy and repair methods are increased by a relatively large value;
+otherwise, if the new solution is accepted, their scores are increased by a relatively smaller value;
+otherwise, if the new solution is not accepted, their scores are decreased.
+
+In our implementation, the solution process ends when we reach a predetermined number of iterations.
+Other criteria that have been used include a hard time limit, and a predetermined number of consecutive iterations without improvement.
+
+\secrev{
+The LNS and ALNS has similarities to the method known as iterated greedy, first proposed by \citet{RuSt07}.
+That first implementation of iterated greedy only uses a single destroy method (based on random removal) and a single repair method.
+As opposed to ALNS, it explicitly includes an optional local search improvement phase.
+\citet{Gl00} points out that alternating constructive and destructive phases corresponds to a one-sided strategic oscillation.
+Strategic oscillation refers to a process where a search is strategically driven to go back and forth between the set of feasible solutions and a set of infeasible solutions \citep{GlLa97}.
+In this context, destroy methods create infeasible solutions, and the repair methods drive the resulting infeasible solution towards a feasible solution.
+Finally, the ruin and recreate heuristic, proposed in \citep{Schrimpf00} is also very similar to LNS and ALNS in the sense that it improves an initial solution by repeatedly destroying (ruining) and repairing (recreating) the current solution.
+}

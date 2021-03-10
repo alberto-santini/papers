@@ -1,0 +1,81 @@
+\documentclass{as-preprint-template}
+
+\usepackage{amsmath,amsfonts}
+\usepackage{breakcites}
+\usepackage{graphicx}
+\usepackage[nameinlink,capitalise]{cleveref}
+
+% Bibliography
+\usepackage{natbib}
+\bibliographystyle{plainnat}
+
+% Algorithm
+\usepackage[algoruled,linesnumbered]{algorithm2e}
+\SetAlgoSkip{smallskip}
+\SetAlFnt{\footnotesize}
+\DontPrintSemicolon
+\crefname{algocf}{algorithm}{algorithms}
+\Crefname{algocf}{Algorithm}{Algorithms}
+\crefname{algocfline}{line}{lines}
+\Crefname{algocfline}{Line}{Lines}
+
+% Math operators
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+% Figures
+\usepackage{tikz}
+\usepackage[font=small]{caption}
+\usepackage{subcaption}
+
+% Tables
+\usepackage{array}
+\usepackage{rotating}
+\usepackage{booktabs}
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+% Old Revisions
+\newcommand{\rev}[1]{#1}
+
+% New revisions (in blue)
+\newcommand{\secrev}[1]{#1}
+
+\addAuthor{Alberto}{Santini}{Univeristat Pompeu Fabra, Barcelona, Spain\thanks{alberto.santini@upf.edu}}
+\addAuthor{Stefan}{R{\o}pke}{Department of Management Science, Danish Technical University, Denmark\thanks{ropke@dtu.dk}}
+\addAuthor{Lars Magnus}{Hvattum}{Molde University College, Norway\thanks{hvattum@himolde.no}}
+\setTitle{A comparison of acceptance criteria for the Adaptive Large Neighbourhood Search metaheuristic}
+\setJournal{Journal of Heuristics}
+\setVolume{24}
+\setNumber{5}
+\setPages{783--815}
+\setYear{2018}
+\setDoi{10.1007/s10732-018-9377-x}
+\setUrl{https://link.springer.com/article/10.1007/s10732-018-9377-x}
+
+\begin{document}
+  \printCover{}
+  \newpage{}
+  \maketitle{}
+  
+  \begin{abstract}
+    Adaptive Large Neighborhood Search (ALNS) is a useful framework for solving difficult combinatorial optimisation problems.
+    As a metaheuristic, it consists of some components that must be tailored to the specific optimisation problem that is being solved, while other components are problem independent.
+    The literature is sparse with respect to studies that aim to evaluate the relative merit of different alternatives for specific problem independent components.
+    This paper investigates one such component, the move acceptance criterion in ALNS, and compares a range of alternatives.
+    Through extensive computational testing, the alternative move acceptance criteria are ranked in three groups, depending on the performance of the resulting ALNS implementations.
+    Among the best variants, we find versions of criteria based on Simulated Annealing, Threshold Acceptance, and Record-to-Record Travel, \rev{with a version of the latter being consistently undominated by the others}.
+    Additional analyses focus on the search behavior, and multiple linear regression is used to identify characteristics of search behavior that are associated with good search performance.
+  \end{abstract}
+
+  \input{sections/1.introduction.tex}
+  \input{sections/2.alns.tex}
+  \input{sections/3.acceptance_criteria.tex}
+  \input{sections/4.problems.tex}
+  \input{sections/5.alns_applied.tex}
+  \input{sections/6.parameter_tuning.tex}
+  \input{sections/7.results.tex}
+  \input{sections/8.conclusions.tex}
+
+  \section*{Bibliography}
+	\bibliography{bibliography}
+\end{document}

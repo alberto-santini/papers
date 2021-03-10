@@ -1,0 +1,243 @@
+\section{Results}\label{sec:results}
+
+The computational experiments have been conducted on the following instances.
+For CMST: 104 instances, available as the \texttt{capmst} test set in the OR Library of \citet{beasley1990or}, containing from 41 to 200 nodes.
+For CVRP: 14 instances by \citet{christofides1979instances},
+13 instances by \citet{rochat1995instances},
+20 instances by \citet{golden1998instances},
+12 instances by \citet{li2005instances}, \rev{and}
+100 instances by \citet{uchoa2014instances}.
+The CVRP instances contain between 50 and 1200 customers. For QAP: 136 symmetric instances from the QAPLIB by \citet{burkard1997qaplib}. The number of iterations and reruns were the same as used for parameter tuning: 150,000 iterations and 10 reruns.
+
+\Cref{tbl:final} summarises the main results, reporting for each acceptance criterion the average deviation to the best known solution from both the average (column ``aDev'') and the best (column ``bDev'') solution obtained over the 10 runs for each instance.
+The results are shown separately for the CMST, the CVRP using a full ALNS, the CVRP using a simple LNS, and the QAP.
+The last column (``aTime'') reports the average solution time.
+Notice that the Random Walk criterion has consistently higher running time, and this is due to a technical reason in the implementation of the algorithm:
+every time a solution is accepted (which is, for Random Walk, at every iteration) a potentially expensive copy is performed, to store the solution object and replace the current solution object.
+
+The results have further been analysed using the Wilcoxon signed-rank test, by comparing each pair of acceptance criteria under the null-hypothesis that the deviations between the average solution found and the best known solution are drawn from identical distributions.
+\Cref{fig:wilc_cmst} summarises the Wilcoxon test for the CMST, with one node per acceptance criterion and an arc going from the better criterion to the worse criterion if the null-hypothesis is rejected at a 0.05 significance level.
+The same is shown for the full ALNS for CVRP in \Cref{fig:wilc_cvrp}, for the simple LNS for CVRP in \Cref{fig:wilc_scvrp}, and for the QAP in \Cref{fig:wilc_qap}.
+
+One of the goals of this study was to quantify the effect that different move acceptance criteria have on the performance of an ALNS. From \Cref{tbl:final} it is clear that the consequences of using a substandard move acceptance criterion can be quite large. \rev{For the CMST and both implementations for the CVRP, the difference between the best and the worst acceptance criterion is more than 2 percentage points in terms of the average gap to the best known solutions. There are two criteria that perform consistently worse than the others: RW and HC. However, even when disregarding RW and HC, the difference between the best criteria and the worst of the rest is more than 0.5 percentage points for the full ALNS implementations for CMST and CVRP, and even larger for the simpler LNS method for CVRP. For the QAP, the differences are somewhat smaller, but still around 0.5 percentage points for the average gaps.}
+
+Another goal of the study was to determine which move acceptance criterion is best suited for the ALNS.
+The results are not entirely clear on this point, but by extracting information from the Wilcoxon signed-rank tests, some conclusions can be reached.
+The simple criteria RW and HC are clearly inferior to the alternatives.
+The order of the other acceptance criteria vary between problems, but they can be separated in two groups: criteria that are close to being top ranked for at least one problem, and criteria that are always mediocre.
+In the first category we find variants of SA, RRT, TA, and WA, and in the latter category we find variants of LAHC, GD, and NLGD. Regarding WA, there is only one implementation, for the QAP, where the criterion is among the very best, and there are other implementations, such as for the CVRP, where it does not perform well. This leaves three candidates for the best overall criterion: SA, RRT, and TA.
+
+Differentiating between the three best types of acceptance criteria may not be entirely straightforward: a variant of SA is best for CMST, whereas a variant of RRT is best for CVRP \rev{and QAP}.
+On the other hand, a version of TA is better than RRT on CMST and better than SA on CVRP. \rev{However, when considering the statistical significance, as illustrated in \Cref{fig:wilc_cmst,fig:wilc_cvrp,fig:wilc_scvrp,fig:wilc_qap}, it turns out that linear RRT is never worse than any other method, with the exception of being worse than linear RRT with fixed end in the full implementation for CVRP. We may therefore suggest that although SA, RRT, and TA are all among the best performing acceptance criteria, RRT may arguably be the very best.}
+
+As each of SA, RRT, and TA were implemented in different variants, it is possible to compare whether linear or exponential versions are better, and whether it is better to fix the end point (fixed end), or to allow the parameter tuning process to potentially find better end points for the control parameters:
+the linear version of RRT is better than the exponential version of RRT, with statistical significance for each of CMST, CVRP, simple CVRP \rev{and QAP}.
+The linear version of TA is better than the exponential version of TA with statistical significance for \rev{three of the test sets}. The exception is the QAP, where the exponential version has smaller average gaps, but the difference is not statistically significant.
+There are no statistically significant differences between the exponential and linear versions of SA.
+Regarding versions with fixed end, no \rev{consistent} pattern emerges: it seems that the parameter tuning process was able to obtain similar performance whether or not the end point for the control parameter was fixed.
+
+Regarding the two hypotheses stated in the introduction, we cannot reject the notion that SA is one of the best move acceptance criteria as, even though linear RRT is performing better for CVRP \rev{and QAP}, linear SA is better for CMST.
+On the other hand, we can reject the hypothesis that the effect of the move acceptance criterion is small compared to random effects when solving each instance: we find clear evidence that some move acceptance criteria perform worse than others, for example that \rev{GD} is worse than linear SA with statistical significance in all four test sets.
+
+\begin{sidewaystable}\centering\scriptsize
+    \begin{tabular}{lrrr}
+      \multicolumn{4}{c}{\textbf{CMST}} \\
+      \toprule\rule{0pt}{2ex}%
+      Acceptance Criterion & aDev \% & bDev \% & aTime (s) \\
+      \midrule\rule{0pt}{3ex}%
+      Lin. SA                   & 0.399 & 0.108 & 9.367 \\
+      Instance-scaled Exp. SA   & 0.400 & 0.150 & 9.223 \\
+      Lin. SA (fixed end)       & 0.407 & 0.119 & 9.224 \\
+      Exp. SA                   & 0.409 & 0.127 & 9.087 \\
+      Lin. TA (fixed end)       & 0.418 & 0.119 & 9.470 \\
+      Exp. SA with Reheating    & 0.428 & 0.174 & 9.086 \\
+      Lin. RRT                  & 0.473 & 0.213 & 7.888 \\
+      Lin. TA                   & 0.474 & 0.120 & 9.156 \\
+      Exp. SA with Ad. Probab.  & 0.509 & 0.159 & 8.665 \\
+      Lin. RRT (fixed end)      & 0.514 & 0.234 & 7.691 \\
+      Lin. WA (fixed end)       & 0.518 & 0.203 & 8.186 \\
+      Exp. WA                   & 0.552 & 0.181 & 8.394 \\
+      Lin. WA                   & 0.566 & 0.195 & 8.361 \\
+      Improved LAHC             & 0.644 & 0.221 & 7.156 \\
+      Exp. RRT                  & 0.646 & 0.269 & 6.758 \\
+      LAHC                      & 0.655 & 0.244 & 7.380 \\
+      GD                        & 0.682 & 0.371 & 6.586 \\
+      Exp. TA                   & 0.759 & 0.315 & 8.818 \\
+      NLGD                      & 0.995 & 0.492 & 7.665 \\
+      HC                        & 2.226 & 1.215 & 6.586 \\
+      RW                        & 2.824 & 2.305 & 12.110 \\
+      \bottomrule
+    \end{tabular}
+    \hspace{6em}
+    \begin{tabular}{lrrr}
+      \multicolumn{4}{c}{\textbf{CVRP}} \\
+      \toprule\rule{0pt}{2ex}%
+      Acceptance Criterion & aDev \% & bDev \% & aTime (s) \\
+      \midrule\rule{0pt}{3ex}%
+      Lin. RRT (fixed end)      & 0.391 & 0.112 & 17.871 \\
+      Lin. RRT                  & 0.423 & 0.148 & 18.443 \\
+      Lin. TA                   & 0.497 & 0.179 & 20.056 \\
+      Lin. TA (fixed end)       & 0.511 & 0.197 & 20.285 \\
+      Exp. SA with Reheating    & 0.527 & 0.175 & 18.508 \\
+      Lin. SA                   & 0.527 & 0.167 & 17.500 \\
+      Exp. SA                   & 0.529 & 0.173 & 18.374 \\
+      Lin. SA (fixed end)       & 0.538 & 0.200 & 18.461 \\
+      Instance-scaled Exp. SA   & 0.542 & 0.159 & 17.328 \\
+      Exp. RRT                  & 0.551 & 0.126 & 16.308 \\
+      Exp. SA with Ad. Prob.    & 0.578 & 0.212 & 17.243 \\
+      Lin. WA (fixed end)       & 0.661 & 0.301 & 19.263 \\
+      LAHC                      & 0.716 & 0.282 & 17.056 \\
+      Improved LAHC             & 0.720 & 0.307 & 17.719 \\
+      GD                        & 0.726 & 0.463 & 17.901 \\
+      Exp. TA                   & 0.735 & 0.276 & 16.416 \\
+      Lin. WA                   & 0.963 & 0.496 & 16.348 \\
+      NLGD                      & 0.989 & 0.393 & 15.453 \\
+      Exp. WA                   & 1.147 & 0.510 & 14.285 \\
+      HC                        & 1.163 & 0.557 & 14.008 \\
+      RW                        & 2.583 & 2.226 & 24.143 \\
+      \bottomrule
+    \end{tabular}
+    \vspace{6em}
+    \begin{tabular}{lrrr}
+      \multicolumn{4}{c}{\textbf{Simple LNS for CVRP}} \\
+      \toprule\rule{0pt}{2ex}%
+      Acceptance Criterion & aDev \% & bDev \% & aTime (s) \\
+      \midrule\rule{0pt}{3ex}%
+      Lin. RRT (fixed end)      & 0.754 & 0.241 & 11.685 \\
+      Lin. RRT                  & 0.768 & 0.218 & 11.547 \\
+      Exp. RRT                  & 0.939 & 0.315 & 10.421 \\
+      Lin. TA (fixed end)       & 0.972 & 0.358 & 13.497 \\
+      Lin. TA                   & 0.973 & 0.328 & 13.529 \\
+      Exp. SA                   & 1.062 & 0.363 & 13.202 \\
+      Instance-scaled Exp. SA   & 1.076 & 0.399 & 13.129 \\
+      Lin. SA (fixed end)       & 1.086 & 0.443 & 13.507 \\
+      Lin. SA                   & 1.112 & 0.427 & 13.206 \\
+      Exp. SA with Reheating    & 1.150 & 0.445 & 12.744 \\
+      Lin. WA (fixed end)       & 1.270 & 0.580 & 10.216 \\
+      Exp. SA with Ad. Prob.    & 1.398 & 0.526 & 12.979 \\
+      Exp. TA                   & 1.425 & 0.591 & 12.165 \\
+      NLGD                      & 1.695 & 0.713 & 11.033 \\
+      GD                        & 1.709 & 1.189 & 11.958 \\
+      LAHC                      & 1.870 & 0.986 & 8.208 \\
+      Improved LAHC             & 1.879 & 0.988 & 7.329 \\
+      Lin. WA                   & 2.461 & 1.272 & 6.347 \\
+      Exp. WA                   & 2.516 & 1.312 & 6.153 \\
+      HC                        & 2.595 & 1.381 & 5.810 \\
+      RW                        & 3.946 & 3.340 & 15.126 \\
+      \bottomrule
+    \end{tabular}
+    \hspace{6em}
+    \begin{tabular}{lrrr}
+      \multicolumn{4}{c}{\textbf{QAP}} \\
+      \toprule\rule{0pt}{2ex}%
+      Acceptance Criterion & aDev \% & bDev \% & aTime (s) \\
+      \midrule\rule{0pt}{3ex}%
+      Lin. WA (fixed end)         & 0.136 & 0.041 & 43.402 \\
+      Lin. WA                     & 0.138 & 0.073 & 47.077 \\
+      Exp. WA                     & 0.145 & 0.065 & 41.057 \\
+      Lin. RRT                    & 0.154 & 0.042 & 66.973 \\
+      Lin. RRT (fixed end)        & 0.164 & 0.048 & 73.529 \\
+      Lin. SA (fixed end)         & 0.173 & 0.048 & 65.191 \\
+      Exp. SA with Rehearing      & 0.204 & 0.122 & 66.363 \\
+      Lin. SA                     & 0.240 & 0.122 & 68.000 \\
+      Instance-scaled Exp. SA     & 0.241 & 0.123 & 67.605 \\
+      Exp. SA with Ad. Prob.      & 0.244 & 0.058 & 58.900 \\
+      Exp. RRT                    & 0.252 & 0.155 & 84.932 \\
+      Exp. TA                     & 0.266 & 0.162 & 85.207 \\
+      Exp. SA                     & 0.273 & 0.143 & 68.253 \\
+      RW                          & 0.370 & 0.217 & 86.565 \\
+      Lin. TA                     & 0.390 & 0.052 & 58.036 \\
+      Lin. TA (fixed end)         & 0.404 & 0.027 & 49.041 \\
+      Improved LAHC               & 0.426 & 0.040 & 23.612 \\
+      GD                          & 0.430 & 0.022 & 24.318 \\
+      LAHC                        & 0.504 & 0.043 & 22.342 \\
+      NLGD                        & 0.596 & 0.069 & 24.020 \\
+      HC                          & 0.666 & 0.073 & 21.454 \\
+      \bottomrule
+    \end{tabular}
+    \caption{Final results for CMST, CVRP, Simple LNS for CVRP, and QAP.}\label{tbl:final}
+\end{sidewaystable}
+
+\begin{figure}
+  \includegraphics[width=\textwidth]{figures/cmst_wilc_bigger.pdf}
+  \caption{Graph based on the Wilcoxon test for problem CMST and using the deviation between the average run and the overall best. Methods on top dominate methods on the bottom. Bluer and thicker arcs mean that the difference in deviation is greater.}\label{fig:wilc_cmst}
+\end{figure}
+
+\begin{figure}
+  \includegraphics[width=\textwidth]{figures/cvrp_wilc_bigger.pdf}
+  \caption{Graph based on the Wilcoxon test for problem CVRP and using the deviation between the average run and the overall best. Methods on top dominate methods on the bottom. Bluer and thicker arcs mean that the difference in deviation is greater.}\label{fig:wilc_cvrp}
+\end{figure}
+
+\begin{figure}
+  \includegraphics[width=\textwidth]{figures/scvrp_wilc_bigger.pdf}
+  \caption{Graph based on the Wilcoxon test for the Simple LNS for CVRP and using the deviation between the average run and the overall best. Methods on top dominate methods on the bottom. Bluer and thicker arcs mean that the difference in deviation is greater.}\label{fig:wilc_scvrp}
+\end{figure}
+
+\begin{figure}
+  \includegraphics[width=\textwidth]{figures/qap_wilc.png}
+  \caption{Graph based on the Wilcoxon test for the problem QAP and using the deviation between the average run and the overall best. Methods on top dominate methods on the bottom. Bluer and thicker arcs mean that the difference in deviation is greater.}\label{fig:wilc_qap}
+\end{figure}
+
+A third goal of this study was to measure how different move acceptance criteria may influence the search behaviour.
+To analyse this, statistics were collected during each run and analysed using multiple linear regression.
+In the regression, the dependent variable is the deviation between the average objective function in a run and the best known solution value.
+Hence, there is one observation for each combination of an instance and a move acceptance criterion.
+Eleven independent variables are included, corresponding to the following statistics calculated for each run:
+the iteration of the last accepted move,
+the iteration of the last improved best found,
+the longest streak of rejected moves,
+the maximum distance between \secrev{two consecutively} accepted \secrev{solutions},
+the total distance between accepted solutions,
+the maximum distance from the initial solution,
+the number of solutions accepted,
+the number of times that the best solution was improved,
+the number of times that the current solution was improved,
+the relative average accepted objective function value,
+and the relative average rejected objective function value.
+The distance between solutions is calculated as the Hamming distance where each edge is represented by a binary digit.
+The relative objective function value of a move is calculated as the ratio of the new solution and the old solution, so that values greater than one imply worsening moves.
+
+Regression coefficients are determined using the method of ordinary least squares, which implies minimising the sum of the squares of the error terms $\sum_{i = 1}^N \varepsilon_i^2$ where $N$ is the number of observations, and the model is:
+\begin{equation}
+  y_{i} = \lambda_0 + \lambda_1 x_{i,1} + \ldots + \lambda_{11} x_{i,11} + \varepsilon_i \quad i = 1, \ldots, N
+\end{equation}
+with $\lambda_0$ being the intercept and $\lambda_1, \ldots, \lambda_{11}$ the regression parameters, $y_i$ the observed values of the dependent variables and $x_{ij}$ the observed values of the independent variables.
+
+To better gauge the relative importance of the different independent variables, the values of each of them were normalised by subtracting the population mean and dividing by the standard deviation.
+After running the regression analysis with all the independent variables, the variables that did not have regression coefficients significantly different from 0, at a 0.05 significance level, were removed and the regression repeated.
+
+The results of the regression analyses are summarised in \Cref{tbl:regression}.
+A negative regression coefficient means that a higher value of the corresponding independent variable is associated with a better performance.
+There are some differences between the results for each of CMST, CVRP, Simple CVRP, \rev{and QAP}, but also some consistent similarities: a worse performance is associated with high values of the iteration of the last accepted solution and the iteration of the last improvement of the best solution found.
+This may indicate that an intensification phase with a high probability of rejecting solutions should not be delayed for too long.
+Higher values for the length of the longest streak of rejected moves is associated to a worse performance, meaning that move acceptance criteria should be designed so as to avoid being stuck in the same solution for too many iterations.
+Increased values of the maximum distance \secrev{of} accepted \secrev{solutions} are associated with improved performance.
+This may suggest that move acceptance should not be based solely on the quality of the resulting solution but also, to some extent, on how similar the new solution is to the current one.
+The relative average objective function value of rejected solutions is found to influence the performance: as the regression coefficients are negative, good performance is found when the solutions rejected are worse.
+This could simply mean that it is good that those solutions are not accepted.
+There is also a trend that a higher number of accepted solutions leads to better performance.
+%, and there is a trend that higher values of relative average objective function values for accepted solutions leads to worse performance (accepting predominantly bad solutions leads to bad performance).
+
+\begin{sidewaystable}\centering\scriptsize
+    \begin{tabular}{lrrrrrrrr}
+        \toprule
+        & \multicolumn{2}{c}{\textbf{CMST}} & \multicolumn{2}{c}{\textbf{CVRP}} & \multicolumn{2}{c}{\textbf{Simple LNS for CVRP}} & \multicolumn{2}{c}{\textbf{QAP}} \\
+        \midrule\rule{0pt}{3ex}%
+        Independent Variable & Regression Coeff. & p-value & Regression Coeff. & p-value & Regression Coeff. & p-value & Regression Coeff. & p-value \\
+        \cmidrule(r){1-1}\cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}
+        (Intercept)             &    0.005 &   --- &  0.006   &   --- &    0.013 &   --- & $-$0.001 &   --- \\
+        Iter. Last Accept.      &    0.005 & 0.000 &  0.001   & 0.020 &    0.005 & 0.001 &          &       \\
+        Iter. Last Impr. Best   &    0.003 & 0.000 &  0.001   & 0.000 &    0.002 & 0.000 &    0.005 & 0.000 \\
+        Longest Reject Streak   &    0.005 & 0.001 &  0.002   & 0.001 &    0.005 & 0.001 &    0.003 & 0.001 \\
+        Max. Dist. btw Accepted & $-$0.001 & 0.000 & $-$0.006 & 0.000 & $-$0.004 & 0.000 & $-$0.005 & 0.000 \\
+        Max. Dist. from Init.   & $-$0.002 & 0.001 &    0.009 & 0.000 &    0.004 & 0.000 &          &       \\
+        Tot. Dist. by Accept.   &          &       &          &       &    0.001 & 0.000 & $-$0.001 & 0.000 \\
+        Num. Sol. Accept.       & $-$0.001 & 0.001 &          &       & $-$0.001 & 0.000 & $-$0.007 & 0.001 \\
+        Num. Sol. Impr. Best    &    0.007 & 0.000 & $-$0.002 & 0.000 &    0.004 & 0.000 &    0.004 & 0.000 \\
+        Num. Sol. Impr. Current &          &       &          &       & $-$0.003 & 0.000 &          &       \\
+        Rel. Avg. Accept. Obj.  & $-$0.002 & 0.000 &    0.011 & 0.000 &    0.013 & 0.000 &          &       \\
+        Rel. Avg. Reject. Obj.  &          &       & $-$0.012 & 0.000 & $-$0.016 & 0.000 & $-$0.011 & 0.000 \\
+        \bottomrule
+    \end{tabular}
+    \caption{Regression analysis results from CMST, CVRP, Simple LNS for CVRP, and QAP. The dependent variable is the deviation between the average run and the overall best. The table only includes values for the significant independent variables.}\label{tbl:regression}
+\end{sidewaystable}

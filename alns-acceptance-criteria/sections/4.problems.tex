@@ -1,0 +1,39 @@
+\section{Test Problems}\label{sec:problems}
+
+To evaluate the different acceptance criteria, we consider ALNS implementations for three different combinatorial optimisation problems, as presented below.
+
+\subsection{Capacitated Vehicle Routing Problem}
+
+In the Capacitated Vehicle Routing Problem (CVRP) we have to deliver goods from a depot to a set of customers, using an unlimited fleet of identical vehicles.
+Each customer demands a certain quantity of goods and the vehicles have a limited capacity.
+Our task is to construct routes starting and ending at the depot that minimise the total travel distance and that obey the capacity of the vehicles.
+We assume that travel distances are symmetric in the sense that the distance from A to B is the same as the distance from B to A.
+The problem can be modelled on a directed graph $G = (N, A)$ where the node set is $N = \{ 0, \ldots, n\}$ and node $0$ represents the depot, while nodes $C = \{ 1, \ldots, n\}$ represent the customers.
+Each customer $i \in C$ has an associated demand $q_i \geq 0$ and the vehicles all have the same capacity $Q \geq \max_{i \in C} q_i$.
+
+In the literature on heuristics for the CVRP, researchers have typically also considered instances that include a distance or duration limit for each route.
+In the standard benchmark instances, customers have a service time and for each route the sum of service times plus distance driven has to be less than or equal to a threshold $L$.
+For more information the reader is referred to \citet{irnich2014family} and \citet{laporte2014heuristics}.
+
+\subsection{Capacitated Minimum Spanning Tree Problem}
+
+In the (symmetric) Capacitated Minimum Spanning Tree (CMST) we have to construct a spanning tree subject to a capacity constraint.
+The problem is defined on a undirected graph $G=(N,E)$ where $N$ is the node set and $E$ are the edges.
+For each edge $e\in E$ we are given an associated cost $c_e \geq 0$.
+In the node set $N=\left\{ 0,\ldots,n \right\}$, node $0$ is the root node.
+The remaining nodes $i \in N \setminus \left\{ 0 \right\}$ are associated with a demand $d_i \geq 0$ and we are given a maximum demand or capacity $Q$.
+Removing node 0 from any spanning tree results in the tree splitting into one or more connected components.
+In the CMST, the solution has to satisfy the property that the sum of the demands of each component (or sub-tree) is less than or equal to $Q$ (capacity constraints).
+We seek the spanning tree that minimizes the sum of edge costs while satisfying capacity constraints.
+For more information on this problem, see \citet{uchoa2008robust}.
+
+\subsection{Quadratic Assignment Problem}
+
+\rev{The Linear Assignment Problem (LAP) aims at assigning $n$ facilities to $n$ locations.}
+\rev{The assignment of facility $i$ to location $j$ incurs in a cost $c_{ij}$.}
+\rev{The objective of the LAP is to minimise the total cost, while each facility is assigned to exactly one location, and each location receives exactly one facility.}
+\rev{The Quadratic Assignment Problem (QAP) is an extension of the LAP, where the costs are associated to pairs of assignments:}
+\rev{we are given $n^4$ costs, with $c_{ijkl}$ corresponding to the simultaneous assignment of facility $i$ to location $j$, and facility $k$ to location $l$.}
+\rev{A cost can be thought of as $c_{ijkl} = f_{ik} d_{jl}$ where $f_{ik}$ is the flow to be sent from facility $i$ to facility $k$, and $d_{jl}$ is the distance between location $j$ and location $l$.}
+\rev{More information about this problem can be found in the seminal paper by \citet{lawler1963quadratic}.}
+\rev{For works on metaheuristics for the QAP see, e.g., \citet{stutzle2006iterated,james2009multistart}.}

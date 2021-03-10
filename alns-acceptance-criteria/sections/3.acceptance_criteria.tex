@@ -1,0 +1,423 @@
+\section{Acceptance Criteria}\label{sec:acceptance_criteria}
+
+In this section we describe the different acceptance criteria tested within the ALNS framework.
+In the following we denote by $N(x)$ the neighbourhood of a solution $x$, defined by a selection of destroy and repair heuristics.
+The cost of a solution $x$ is denoted by $f(x)$.
+We refer to the current solution as $x$;
+when it is important to specify which iteration of the ALNS algorithm we are considering, we use the notation $x_i$, where $i$ is the iteration number.
+The \rev{new} solution produced by the destroy and repair heuristics in $N(x)$ is denoted by $x'$, while we indicate the best encountered solution as $x^*$.
+The initial solution is denoted by $x_0$.
+Finally, $K$ is the total number of iterations.
+In the pseudo-code, we will assume that we are minimising the objective function $f(\cdot)$.
+
+The acceptance criteria depend on a given number of parameters, that in our case \rev{ranges} from $0$ to $4$.
+Some acceptance criteria make use of an internal state, which varies during the solution process, and we assume that the internal state is updated at each iteration of the ALNS algorithm.
+Alternative criterion-based approaches exist in the literature.
+For example, one could decide to update certain values of the internal state only when there is apparent convergence with the current settings.
+Since these strategies cannot be applied uniformly across all the acceptance criteria, we resort to our simpler approach.
+
+Since we are dealing with problem instances that are very diverse in nature and size, we update the internal state used by the acceptance criteria using information relative to the cost of either the best or the current solution, rather than absolute numbers.
+%For example, in Great Deluge (presented in \Cref{ssec:gd}), while it is possible to find in the literature implementations in which the water level changes by a certain \emph{absolute} quantity at each iteration, we update it in relation to the cost of the current solution.
+
+\subsection{Hill Climbing}
+
+Hill Climbing (HC), presented in \Cref{alg:hc}, accepts a \rev{new} solution iff it is better than the current one.
+
+\begin{algorithm}[ht]
+  \caption{Hill Climbing}\label{alg:hc}
+  \SetKwInOut{Input}{Input}
+
+  \Input{Initial solution: $x_0$}
+
+  $x = x_0$\tcc*{Initialise current solution}
+  $i = 1$\tcc*{Initialise iteration count}
+
+  \While{$i \leq K$}{
+    Pick $x' \in N(x)$\;
+    \If{$f(x') \leq f(x)$}{
+      $x = x'$
+    }
+    $i = i + 1$
+  }
+
+  \Return $x$
+\end{algorithm}
+
+\subsection{Random Walk}
+
+At the other end of the spectrum from HC, there is Random Walk (RW), presented in \Cref{alg:rw}. In this case, we accept all \rev{new} solutions.
+
+\begin{algorithm}[ht]
+  \caption{Random Walk}\label{alg:rw}
+  \SetKwInOut{Input}{Input}
+
+  \Input{Initial solution: $x_0$}
+
+  $x = x_0$\tcc*{Initialise current solution}
+  $x^* = x_0$\tcc*{Initialise best solution}
+  $i = 1$\tcc*{Initialise iteration count}
+
+  \While{$i \leq K$}{
+    Pick $x' \in N(x)$\;
+    $x = x'$
+
+    \If{$f(x) < f(x^*)$}{
+      $x^* = x$
+    }
+
+    $i = i + 1$
+  }
+
+  \Return $x^*$
+\end{algorithm}
+
+\subsection{Late Acceptance Hill Climbing}
+
+This criterion, presented in \Cref{alg:lahc}, is similar to HC, but the new solution is compared to what was the current solution $L$ iterations ago.
+In order to implement this acceptance criterion, it is necessary to keep a circular list of length $L$ that stores the last $L$ current solutions.
+The criterion was first introduced by \citet{burke2008late,burke2012late}.
+
+\begin{algorithm}[ht]
+  \caption{Late Acceptance Hill Climbing}\label{alg:lahc}
+  \SetKwInOut{Input}{Input}
+
+  \Input{Initial solution: $x_0$}
+  \Input{List length: $L$}
+
+  $x = x_0$\tcc*{Initialise current solution}
+  $x^* = x_0$\tcc*{Initialise best solution}
+  $x_{-1}, \ldots, x_{-L+1} = x_0$\tcc*{Initialise list}
+  $i=1$\tcc*{Iteration count}
+
+  \While{$i \leq K$}{
+    Pick $x' \in N(x)$\;
+    \If{$f(x') \leq f(x_{i-L})$}{ \nllabel{ln:late_acceptance}
+      $x = x'$
+    }
+
+    \If{$f(x) < f(x^*)$}{
+      $x^* = x$
+    }
+
+    $i = i +1$
+  }
+
+  \Return $x^*$
+\end{algorithm}
+
+%\paragraph{Parameters related to acceptance}
+\emph{Parameters related to acceptance:}
+This acceptance criterion only uses parameter: the length $L$ of the look-back list.
+
+%\paragraph{Variants}
+\emph{Variants:}
+The standard version of this acceptance criterion would not accept the \rev{new solution} in case $f(x_{i-L}) < f(x') < f(x)$.
+As proposed by \citet{burke2012late}, the criterion can be emended to accept $x'$ if \emph{either} it is better than the current solution $L$ iterations ago, \emph{or} it is better than the current solution at the present iteration.
+In this variant, called \textbf{Improved LAHC}, we edit line \ref{ln:late_acceptance} to become $f(x') \leq f(x_{i-L}) \; \vee \; f(x') \leq f(x)$ (where $\vee$ denotes logical or).
+
+\subsection{Threshold Acceptance}
+
+With the Threshold Acceptance (TA) criterion introduced by \citet{dueck1990threshold} and presented in \Cref{alg:ta}, a \rev{new} solution is accepted if the gap between the \rev{new} and the current solution is smaller than a threshold $T$.
+The threshold starts at a large value and decreases at every iteration.
+
+\begin{algorithm}[ht]
+  \caption{Threshold Acceptance}\label{alg:ta}
+  \SetKwInOut{Input}{Input}
+
+  \Input{Initial solution: $x_0$}
+  \Input{Initial threshold: $T$}
+
+  $x = x_0$\tcc*{Initialise current solution}
+  $x^* = x_0$\tcc*{Initialise best solution}
+  $i=1$\tcc*{Iteration count}
+
+  \While{$i \leq K$}{
+    Pick $x' \in N(x)$\;
+    \If{$\frac{f(x') - f(x)}{f(x')} < T$}{
+      $x = x'$
+    }
+
+    \If{$f(x) < f(x^*)$}{
+      $x^* = x$
+    }
+
+    Update($T$)\;
+    $i = i + 1$
+  }
+
+  \Return $x^*$
+\end{algorithm}
+
+\emph{Parameters related to acceptance:}
+The user-provided parameters are the start threshold $T^\textup{start}$ and the end threshold $T^\textup{end}$.
+The initial threshold $T$ is set to its start value.
+At every iteration, the threshold is updated to move towards its end value.
+
+\emph{Variants:}
+We tested two rates of decay: linear and exponential.
+In the first case, the \textbf{Linear Threshold Acceptance} method, we update the threshold as: $T \leftarrow T - (T^\textup{start} - T^\textup{end})/K$.
+In the second case, the \textbf{Exponential Threshold Acceptance} method, we update it as $T \leftarrow T \cdot (T^\textup{end}/T^\textup{start})^{1/K}$.
+
+\subsection{Simulated Annealing}\label{ssec:sa}
+
+Simulated Annealing (SA), presented in \Cref{alg:sa}, is the acceptance criterion most commonly used within the ALNS framework.
+It was originally introduced by \citet{kirkpatrick1983optimization} and it was used with the ALNS since its debut by \citet{ropke2006adaptive}.
+The basic idea behind SA is similar to TA: moves to solutions that are worse than the current one are allowed, but the probability of doing so depends on the state of the search and on the gap between $f(x)$ and $f(x')$.
+
+\begin{algorithm}[ht]
+  \caption{Simulated Annealing}\label{alg:sa}
+  \SetKwInOut{Input}{Input}
+
+  \Input{Initial solution: $x_0$}
+  \Input{Initial temperature: $T$}
+
+  $x = x_0$\tcc*{Initialise current solution}
+  $x^* = x_0$\tcc*{Initialise best solution}
+  $i=1$\tcc*{Iteration count}
+
+  \While{$i \leq K$}{
+    Pick $x' \in N(x)$\;
+    \If{$\textup{rand}(0,1) \leq e^{\frac{f(x)-f(x')}{T}}$}{ \label{ln:sa_acceptance}
+      $x = x'$
+    }
+
+    \If{$f(x) < f(x^*)$}{
+      $x^* = x$
+    }
+
+    Update($T$)\;
+    $i = i + 1$
+  }
+
+  \Return $x^*$
+\end{algorithm}
+
+\emph{Parameters related to acceptance:}
+The probability that a new solution of value $f(x')$ is accepted is
+\begin{equation*}
+  e^{\frac{f(x)-f(x')}{T}}
+\end{equation*}
+Given a reference solution value $z$, if we wanted to accept with probability $p \in [0,1]$ \rev{new} solutions of cost $f(x') = h z$, we would have to set the temperature $T$ according to:
+\begin{equation*}
+  p = e^{\frac{z - hz}{T}} \Rightarrow \ln p = \frac{z(1-h)}{T} \Rightarrow T = \frac{z(1-h)}{\ln p}
+\end{equation*}
+If we use the reference probability $p = 0.5$ this becomes
+\begin{equation}
+  T = \frac{z(1-h)}{\ln 0.5} \label{eq:temp}
+\end{equation}
+We can therefore use two user-provided parameters $h^\textup{start}, h^\textup{end}$ that define how much worse solutions we accept with probability $0.5$ at the beginning and the end of the procedure.
+The corresponding start and end temperatures $T^\textup{start}$ and $T^\textup{end}$ can then be calculated using \eqref{eq:temp}.
+
+\emph{Variants:}
+It remains an open question how to choose the reference value $z$.
+One option is to use the initial solution: $z = f(x_0)$.
+The parameter $T$ should then be initialised as $T^\textup{start}$ and then updated at every iteration, as $T \leftarrow T \cdot (T^\textup{end}/T^\textup{start})^{1/K}$.
+We refer to this method, introduced as the default acceptance criterion for ALNS by \citet{ropke2006adaptive}, simply as \textbf{Exponential Simulated Annealing}.
+A variant of this method has been proposed by \citet{pisinger2007general}, where the authors noticed that the start and end temperature values can be sensitive to the size of the instance.
+How this \emph{size} is defined is problem dependent (for example, it can be the number of customers in a Vehicle Routing Problem).
+In the following we just assume that it is a positive real number $s \geq 1$ .
+In the variant of SA that we called \textbf{Instance-Scaled Exponential Simulated Annealing}, we divide the start and end temperature by a coefficient $s^M$, where $M \in \mathbb{N}$ is a parameter.
+Since \citet{pisinger2007general} only considered the case where $M = 1$, we take this as the base case upon which we build the following additional variations.
+The first variation builds on the observation that the best known solution at a certain iteration could be much better than the initial one.
+Therefore, the reference value $z$ can be updated every time the best solution value improves, as $T^\textup{end} = (f(x^*) \cdot (1-h)) / \ln 0.5$.
+This variant, which we call \textbf{Exponential Simulated Annealing With Adaptive Probability} coincides with the base method if the value of the initial solution is never improved.
+Similarly to what we did for TA, we also considered a version of SA where the decrease between start and end temperature is linear.
+We named this version \textbf{Linear Simulated Annealing}.
+The update function for $T$ is $T \leftarrow T - (T^\textup{start} - T^\textup{end})/K$.
+Another common variant is SA with reheating, discussed by \citet{connolly1992general}.
+Reheating is used to escape local minima in later phases of the exploration, when the temperature is too small to accept a (worsening) diversifying solution.
+In our implementation we perform reheating a fixed number of times $R$.
+When reheating occurs, the temperature is set to the temperature $T^*$ recorded the last time the best solution was improved, multiplied by a coefficient $r > 1$:
+\begin{equation*}
+	T \leftarrow r T^* \quad \text{ (every }K/(R+1)\text{ iterations)}
+\end{equation*}
+We call this variant \textbf{Exponential Simulated Annealing With Reheating}.
+On top of the parameters $h^\textup{start}$ and $h^\textup{end}$, this variant has the two additional parameters $R$ and $r$.
+
+\subsection{Great Deluge}\label{ssec:gd}
+
+With the Great Deluge (GD) criterion, introduced by \citet{dueck1993new} and presented in \Cref{alg:gd}, a \rev{new} solution is accepted only if its cost is smaller than a threshold, called the \emph{water level}.
+The water level starts at a high value and decreases at each iteration.
+
+\begin{algorithm}[ht]
+  \caption{Great Deluge}\label{alg:gd}
+  \SetKwInOut{Input}{Input}
+
+  \Input{Initial solution: $x_0$}
+  \Input{Initial water level: $W$}
+
+  $x = x_0$\tcc*{Initialise current solution}
+  $x^* = x_0$\tcc*{Initialise best solution}
+  $i=1$\tcc*{Iteration count}
+
+  \While{$i \leq K$}{
+    Pick $x' \in N(x)$\;
+    \If{$f(x') < W$}{
+      $x = x'$
+    }
+
+    \If{$f(x) < f(x^*)$}{
+      $x^* = x$
+    }
+
+    Update($W$)\;
+    $i = i + 1$
+  }
+
+  \Return $x^*$
+\end{algorithm}
+
+\emph{Parameters related to acceptance:}
+The two key parameters used for GD are the initial water level and the decrease rate.
+The initial water level is set to $W = \alpha \cdot f(x_0)$, where $\alpha > 1$ is a user-provided parameter.
+The water level is then decreased at each iteration, $W \leftarrow W - \beta (W - f(x))$, according to another parameter $\beta \in (0,1)$.
+
+\subsection{Non-Linear Great Deluge}
+
+The Non-Linear Great Deluge criterion (NLGD), presented in \Cref{alg:nlgd}, builds on the same idea of the GD, with a few variations.
+The water level decreases more quickly in the beginning of the search process, more slowly towards the end, and can also increase.
+The NLGD was introduced by \citet{landa2008great} for a course timetabling problem;
+in our implementation we change some of the fixed values, which the authors tuned for their specific problem, and we replace them with parameters.
+
+\begin{algorithm}[ht]
+  \caption{Non-Linear Great Deluge}\label{alg:nlgd}
+  \SetKwInOut{Input}{Input}
+
+  \Input{Initial solution: $x_0$}
+  \Input{Initial water level: $W$}
+
+  $x = x_0$\tcc*{Initialise current solution}
+  $x^* = x_0$\tcc*{Initialise best solution}
+  $i=1$\tcc*{Iteration count}
+
+  \While{$i \leq K$}{
+    Pick $x' \in N(x)$\;
+    \If{$f(x') < W \; \vee \; f(x') < f(x)$}{
+      $x = x'$
+    }
+
+    \If{$f(x) < f(x^*)$}{
+      $x^* = x$
+    }
+
+    Update($W$)\;
+    $i = i + 1$
+  }
+
+  \Return $x^*$
+\end{algorithm}
+
+The general form of this acceptance criterion is similar to the criterion in \Cref{alg:gd}.
+The only difference is that the acceptance criterion checks that \emph{either} the new solution has a cost lower than the current water level, \emph{or} it improves over the current solution.
+This is done because in NLGD the water level is not guaranteed to be above the cost of the current solution.
+
+\emph{Parameters related to acceptance:}
+The initial water level is chosen similarly as for GD: $W = \alpha \cdot f(x_0)$, with a user-provided parameter $\alpha > 1$.
+Three additional parameters --- $\beta, \gamma$, and $\delta$ --- are used to update the water level at each iteration, according to the decision flow in \Cref{alg:nlgd-df}:
+if the new solution is worse than the water level, then the water level tends to increase, to increase the chance of accepting new solutions.
+If the last solution is better than the water level, but not much better (the gap is smaller than $\beta$), then again we increase the water level, for similar reasons.
+On the other hand, if the gap is larger than $\beta$, we decrease the water level and the decrease function is exponential.
+
+\begin{algorithm}[ht]
+  \caption{Update($W$)}\label{alg:nlgd-df}
+
+  $G = \frac{W - f(x')}{W}$\tcc*{Gap between water level and new solution}
+
+  \eIf{$G < \beta$}{
+    \Return $W + \gamma \cdot \left| f(x') - W \right|$\tcc*{Re-increase W}
+  }{
+    \Return $W \cdot e^{- \delta \cdot f(x^*)} + f(x^*)$\tcc*{Exponentially decrease W}
+  }
+\end{algorithm}\vspace{1em}
+
+\subsection{Record-to-Record Travel}
+
+The Record-to-Record Travel (RRT) criterion presented in \Cref{alg:rrt} is similar to TA, but the \rev{new} solution is accepted if the gap between the \rev{new} and the best (rather than the current) solution is smaller than a threshold $T$.
+The threshold starts at a large value and decreases at every iteration to reach its predetermined value at the end of the search process.
+
+\begin{algorithm}[ht]
+  \caption{Record-to-Record Travel}\label{alg:rrt}
+  \SetKwInOut{Input}{Input}
+
+  \Input{Initial solution: $x_0$}
+  \Input{Initial threshold: $T$}
+
+  $x = x_0$\tcc*{Initialise current solution}
+  $x^* = x_0$\tcc*{Initialise best solution}
+  $i=1$\tcc*{Iteration count}
+
+  \While{$i \leq K$}{
+    Pick $x' \in N(x)$\;
+    \If{$\frac{f(x') - f(x^*)}{f(x')} < T$}{
+      $x = x'$
+    }
+
+    \If{$f(x) < f(x^*)$}{
+      $x^* = x$
+    }
+
+    Update($T$)\;
+    $i = i + 1$
+  }
+
+  \Return $x^*$
+\end{algorithm}
+
+\emph{Parameters related to acceptance:}
+The user-provided parameters are the start threshold $T^\textup{start}$ and the end threshold $T^\textup{end}$.
+The initial threshold $T$ is set to its start value and, at each iteration, moves towards the end value.
+
+\emph{Variants:}
+Analogous to what was done for TA, we tested two rates of decay that give rise to two variants that we call \textbf{Linear Record-to-Record Travel} and \textbf{Exponential Record-to-Record Travel}.
+
+\subsection{Worse Accept}
+
+The Worse Accept (WA) criterion presented in \Cref{alg:wa} tries to increase diversification by accepting a \rev{new} solution if it improves over the current one, or --- regardless of its cost --- with a given probability, $p$.
+This probability is higher at the beginning and smaller at the end of the solution process.
+%This is, to our best knowledge, the first time that such a method is considered in the literature.
+
+This criteria is particularly suited in cases when the objective value of the problem typically holds a few discrete values, and passing from a value to the next better one is a relatively rare occurrence.
+An example of such a problem is the Vertex Colouring Problem (VCP), in which one has to produce a colouring of a graph, using the smallest number of colours.
+WA was employed as the acceptance criterion in an ALNS-based metaheuristic for the Partition Colouring Problem (a generalisation of the VCP) by \citet{furini2016branch}.
+
+\begin{algorithm}[ht]
+  \caption{Worse Accept}\label{alg:wa}
+  \SetKwInOut{Input}{Input}
+
+  \Input{Initial solution: $x_0$}
+  \Input{Initial probability: $p$}
+
+  $x = x_0$\tcc*{Initialise current solution}
+  $x^* = x_0$\tcc*{Initialise best solution}
+  $i=1$\tcc*{Iteration count}
+
+  \While{$i \leq K$}{
+    Pick $x' \in N(x)$\;
+    \If{$f(x') < f(x) \; \vee \; \textup{rand}(0,1) < p$}{
+      $x = x'$
+    }
+
+    \If{$f(x) < f(x^*)$}{
+      $x^* = x$
+    }
+
+    Update($p$)\;
+    $i = i + 1$
+  }
+
+  \Return $x^*$
+\end{algorithm}
+
+\emph{Parameters related to acceptance:}
+The user-provided parameters are the start probability $p^\textup{start}$ and the end probability $p^\textup{end}$.
+
+\emph{Variants:}
+The probability decay, similarly to what done for other methods, can be linear or exponential.
+This gives rise to two criteria: \textbf{Linear Worse Accept} and \textbf{Exponential Worse Accept}.
+
+\subsection{Parameter space reduction}
+
+For the linear variants of methods TA, SA, WA and RRT, it is sensible to set the end parameter (be it threshold, temperature or probability) to values very close to zero.
+We can therefore reduce the dimension of the parameter space, by simply fixing these end parameters to 0.
+The resulting new methods are referred to by using the additional suffix ``\textbf{(fixed end)}''.
+Notice that, on the other hand, an exponential decay function can never reach the value 0, by definition.

@@ -1,0 +1,76 @@
+\section{ALNS applied to Test Problems}\label{sec:applied}
+
+In the following we describe details of ALNS implementations for each of the two optimisation problems that we are solving. We point out that we used the parallel version of ALNS described in \citet{ropke2016}, with the number of parallel threads set to 8.
+
+\subsection{ALNS for the CVRP}\label{ssec:applied_cvrp}
+
+Let $n$ be the number of customers in the instance. We determine an upper bound for the number of customers to remove based on two parameters: an absolute upper bound $\bar{\omega}^{+}$ and a relative one $\omega^{+}$. The upper bound is then $n^{+}=\min\{\bar{\omega}^{+},\omega^{+}n$\}. Similarly a lower bound is based on the parameters $\bar{\omega}^{-}$ and $\omega^{-}$; the lower bound is $n^{-}=\min\{n^{+},\max\{\bar{\omega}^{-},\omega^{-}n$\}\}. Based on the upper and lower bound we select the number of customers to remove, $r$, as a uniformly random number in the interval $\{ n^{-}, \ldots, n^{+} \}$.
+
+The destroy method used are: random removal, relatedness removal (introduced by \citet{Shaw98}), and history-based removal. These methods are described in detail in \citet[Section 5]{ropke2006unified}. The repair method used is called regret repair, first introduced for vehicle problems by \citet{potvin1993parallel} and described in detail in \citet[Section 3.2.2]{ropke2006adaptive}. A steepest descent algorithm based on a small neighbourhood is also implemented to improve the solution found by the regret heuristic. The descent algorithm uses the 2-opt neighbourhood, both considering the intra-route and the inter-route variant (also known as 2-opt{*}, see \citet{laporte2014heuristics}). In order to save running time, it is not used every time a partial solution has been repaired, but only with a given probability $p^\textup{2-opt}$.
+
+A random starting solution is created by constructing routes iteratively. Let $U$ be the set of customers that are still not placed in the solution. Initially $U$ contains all customers. In order to start a new route, a random seed customer is selected from $U$. Customers are then added to the route until the capacity or the length constraint on the route disallow further insertions. When choosing the customer to insert into a growing route, the algorithm simply selects the customer whose insertion increases the cost of the route the least. Whenever a route is full, a new route is created following the same procedure. This process continues until all customers have been inserted.
+
+\subsection{Simple LNS for the CVRP}
+
+A simplified version of the ALNS is also considered for the CVRP. The reason for this is that the full ALNS was developed using the SA acceptance criterion, and that the selection of components in the full ALNS could therefore be biased towards components that fit well with the behavior of the SA criterion. The simple LNS for the CVRP uses a single destroy and a single repair method. The destroy method is random removal and the repair method is the deterministic regret method. The repair method does not include the local improvement method. The number of customers to remove and the initial solution are found in the same way as for the more complex ALNS method. We sometimes refer to this combination of an ALNS implementation and test problem as \emph{Simple CVRP}.
+
+\subsection{CMST}
+
+To the best of our knowledge, the first application of the ALNS metaheuristic to the CMST problem is presented in \citet{ropke2016}. In the following, we give a brief summary of the implementation, while referring the reader to the cited article for more details.
+
+The number of nodes of the graph to remove is determined in the same way as for the CVRP (see \Cref{ssec:applied_cvrp}). The destroy methods used are relatedness removal and history-based removal, which are analogous to the CVRP methods with the same names. Similarly, the repair method, regret repair, is analogous to the method used for the CVRP. Furthermore, we also used a greedy insertion repair method. The solutions produced by the repair methods are improved by solving a minimum spanning tree problem for each sub-tree of the solution.
+
+Unlike what is done for the CVRP, the initial solution is created deterministically by a two-stage procedure that first estimates the number of sub-trees that need to be created, and then assigns nodes to the subtrees.
+
+\subsection{QAP}
+
+\rev{The implemented ALNS destroys a solution by removing facilities and repairs the solution by reinserting the facilities.}
+\rev{The number of facilities to remove is determined in the same way as for the CVRP and CMST where $n$ now is the number of facilities in the instance.}
+\rev{One destroy method is implemented, it selects the facilities to remove at random.}
+\rev{Three repair methods are implemented.}
+\rev{All methods reinsert the facilities one by one and they differ in the way they order the facilities to insert.}
+
+\rev{Greedy repair inserts the facility whose insertion increases the overall cost the least.}
+\rev{When evaluating insertion positions it is possible to apply noise to the cost of each insertion in order to randomise the method.}
+\rev{When the greedy repair method is invoked the deterministic or the randomised version is selected at random, both have equal probability of being selected.}
+\rev{Worst-facility-first repair takes the opposite strategy and first inserts the facility that will increase the cost of the solution the most (it has to be inserted, so why not do it straight away).}
+\rev{Random-sequence repair creates a random permutation of the facilities that should be inserted and inserts them in this order.}
+\rev{Common for all repair methods is that when a facility has to be inserted, it is inserted at the location
+where it increases the overall cost the least.}
+
+\rev{A two-opt steepest descent algorithm has been implemented to improve the solution generated by the repair methods.}
+\rev{The algorithm considers all possible swaps of two facilities and performs the swap that decreases
+the objective value the most.}
+\rev{This continues until there is no way of improving the solution by swapping two facilities (see e.g. \cite{merz2000fitness}).}
+\rev{The two-opt algorithm is used with 10\% probability after the worst-facility-first repair
+and random-sequence repair methods.}
+\rev{It is not used together with the greedy repair method.}
+
+\rev{To generate an initial solution the greedy-repair method is used.}
+\rev{The first two facilities are placed using the approach suggested by \cite{LiPaRe94} and the remaining facilities are placed using the greedy repair method.}
+
+\subsection{Problem-specific parameters}
+
+Some parameters of the ALNS implementations, relative to the problem-specific destroy and repair heuristics, and to local improvement methods, are kept at fixed values. \Cref{tbl:fixed_params} describes the values of these parameters.
+
+\begin{table}[ht]\centering\scriptsize
+  \begin{tabular}{llll}
+     \toprule
+     \textbf{Problem} & \textbf{Param type} & \textbf{Parameter} & \textbf{Values} \\
+     \midrule
+     CMST & Destroy & Number of customers to remove & $\bar{\omega}^{+}=30,\omega^{+}=0.4,\bar{\omega}^{-}=5,\omega^{-}=0.1$ \\
+     CMST & Destroy & Destroy close customers & $\eta=\frac{n}{2}, p^\textup{fix}=4$  \\
+     CMST & Destroy & Historical node-pair destroy & $p^\textup{hist}=5$ \\
+     CMST & Repair & Regret repair & $p^\textup{regret}=1.5$ (stochastic version) \\
+     CVRP & Destroy & Number of nodes to remove & $\bar{\omega}^{+}=50,\omega^{+}=0.4,\bar{\omega}^{-}=10,\omega^{-}=0.1$ \\
+     CVRP & Destroy & Relatedness destroy method & $p^\textup{rel}=5$ \\
+     CVRP & Destroy & Historical node-pair destroy & $p^\textup{hist}=5$ \\
+     CVRP & Repair & Regret repair & $p^\textup{regret}=1.5$ (stochastic version) \\
+     CVRP & Local impr. & 2-opt$^*$ local search & $p^\textup{2-opt}=0.1$ \\
+     QAP & Destroy & Number of locations to remove & $\bar{\omega}^{+}=50,\omega^{+}=0.4,\bar{\omega}^{-}=8,\omega^{-}=0.1$ \\
+     QAP & Repair & Greedy repair probability of adding noise & $p=0.5$ \\
+     QAP & Repair & Greedy repair noise factor & $\gamma=0.4$ \\
+     \bottomrule
+  \end{tabular}
+  \caption{Problem-specific parameters which have been kept fixed.}\label{tbl:fixed_params}
+\end{table}

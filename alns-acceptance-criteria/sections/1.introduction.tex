@@ -1,0 +1,32 @@
+\section{Introduction}\label{sec:introduction}
+
+The Adaptive Large Neighborhood Search (ALNS) metaheuristic \citep{ropke2006adaptive} has become a popular template for implementing heuristic solution methods, especially for vehicle routing applications \citep{demir2012adaptive, grangier2016adaptive, hemmelmayr2012adaptive, muller2012hybrid, ribeiro2012adaptive}.
+The metaheuristic allows the use of problem specific knowledge when specifying operators for partially destroying and then repairing a solution to an optimisation problem.
+Problem independent components of the ALNS dictate how different destroy and repair operators are used and control the search trajectory.
+One presumably important component that influences the search trajectory is the move acceptance criterion.
+In the original ALNS, this criterion was based on Simulated Annealing \citep{ropke2006adaptive}, whereas earlier work on Large Neighborhood Search (LNS) by \citet{Shaw98} accepted only improving solutions.
+Recently, some implementations have used the Record-to-Record Travel acceptance criterion instead \citep{Lei2011}, and in one case it was found to perform better than the standard Simulated Annealing criterion \citep{Hemmati2016}.
+
+Currently, however, there are no guidelines available to recommend one acceptance criterion over another.
+This paper intends to fill this gap by investigating a large number of different move acceptance criteria by subjecting them to extensive computational testing.
+Through empirical experiments we attempt to 1) quantify the effect on performance from using different acceptance criteria, 2) suggest which move acceptance criterion is better suited for an implementation of ALNS, and 3) attempt to measure in which way the move acceptance criteria influence the search behaviour.
+
+In particular, two main hypotheses can be tested with respect to the choice of acceptance criterion in ALNS.
+\rev{The first} hypothesis is that the standard Simulated Annealing acceptance criterion is the best criterion, in that it leads to better solutions within a standard running time than when using any other criterion.
+This hypothesis is reasonable based on the fact that most publications describing ALNS implements this acceptance criterion.
+\rev{The second} hypothesis is that the influence of the acceptance criterion on the performance and behaviour of the search is negligible, that is, the effect size is small compared to random variations in search performance.
+
+\secrev{
+  To test these hypoteses, we used a vast test bed of instances, from three well-known problems.
+  The first is the Capacitated Vehicle Routing Problem, concerned with the optimal delivery of goods to customers using a fleet of capacitated vehicles.
+  The second is the Capacitated Minimum Spanning Tree Problem, where we have to find a spanning tree in a graph minimising the cost of the included edges, under a capacity constraint on its sub-trees.
+  The third one is the Quadratic Assignment Problem: an extension of the classical assignment problem, where costs are associated with pairs of simultaneous assignments.
+  See \Cref{sec:problems} for a more detailed description.
+}
+
+The remainder of this paper is structured as follows.
+In \Cref{sec:alns} we give a brief description of the ALNS metaheuristic;
+\Cref{sec:acceptance_criteria} lists the acceptance criteria we are comparing \rev{in} this work.
+\Cref{sec:problems,sec:applied} describe the test problems and give details of the implementation of ALNS used to solve them.
+\Cref{sec:parameter_tuning} explains the process with which we tuned the parameters related to the acceptance criteria.
+We report computational results in \Cref{sec:results} and finally summarise our findings in the conclusions, in \Cref{sec:conclusions}.

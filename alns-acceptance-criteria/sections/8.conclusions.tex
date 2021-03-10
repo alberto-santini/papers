@@ -1,0 +1,49 @@
+\section{Conclusions}\label{sec:conclusions}
+
+Many different move acceptance criteria are available when implementing a heuristic based on the ALNS framework.
+These include Hill Climbing (HC), Random Walk (RW), Late Acceptance Hill Climbing (LAHC), Threshold Acceptance (TA), Simulated Annealing (SA), Great Deluge (GD), Non-Linear Great Deluge (NLGD), and Record-to-Record Travel (RRT).
+In addition, a new criterion called Worse Accept (WA) was introduced in this paper.
+Based on current literature, it is difficult to ascertain whether any of these are better choices than the others in the context of the ALNS framework.
+
+We presented a large computational study, where the results point out that HC and RW are bad choices for a move acceptance criterion in \rev{four} different settings, including an ALNS for a capacitated minimum spanning tree problem (CMST), an ALNS for the capacitated vehicle routing problem (CVRP), a simple LNS for the CVRP, and an ALNS for the quadratic assignment problem (QAP).
+In the same tests, SA, RRT, and TA performed best, whereas LAHC, GD, NLGD, and WA performed better than HC and RW but worse than SA, RRT, and TA.
+\rev{In the three out of four test sets, a version of RRT performed to such high standards that no other acceptance criterion was better with statistical significance. In the forth test set (the full ALNS for CVRP), the same version of RRT was only bettered by another version of RRT.}
+
+Several sub-variants of the move acceptance criteria were also tested and analysed.
+We observed that linear versions, where the crucial parameter for acceptance changes linearly from a start to an end value, of many well-established criteria fare better than or similarly to the standard exponential versions.
+Furthermore, the linear versions have the advantage that the end value for the aforementioned parameter can often be fixed to zero.
+Such an approach does not lead to deteriorated solution quality, but reduces the number of dimensions of the parameter space by one.
+
+It was found that the effect of using different move acceptance criteria can be fairly large, easily affecting the average gap to the best known solutions by more than 0.5 percentage points.
+Multiple linear regression was used to find relationships between the performance of the move acceptance criteria and statistics gathered during the runs.
+Better performance is associated with 1) accepting the last move in an early iteration, 2) finding the last improvement of the best solution in an early iteration, 3) not having long streaks of rejecting moves, 4) having a \secrev{long} maximum distance \secrev{in the search space} between accepted solutions, and 5) having high relative average objective function values for rejected solutions.
+
+To summarise, we can make the following recommendations for implementing an ALNS heuristic:
+\begin{itemize}
+  \item Use an acceptance criterion based on SA, TA, or RRT. If time permits, it may pay off to attempt all three, \rev{and otherwise, RRT should be preferred.}
+  \item Use a linear acceptance parameter function ending at zero: this reduces the number of parameters by one and makes tuning easier, without sacrificing the solution quality.
+\end{itemize}
+
+The conclusions drawn from the experiments described in this paper will not necessarily apply to all other implementations, and we expect these recommendations to be most useful when solving problems closely related to the CVRP, the CMST, \rev{or the QAP}.
+\rev{
+  The relative merit of the move acceptance criteria may also change based on the number of iterations that can be run.
+  In our tests, a rather large number of iterations was performed.
+  In other contexts, this number may be limited, either because the operators in the ALNS are time consuming themselves \citep{gullhav2017alns}, because other time consuming calculations are made between ALNS iterations \citep{schmid2014}, or because the ALNS is part of a larger framework and has to run fast \citep{parragh2013lnscolumn}.
+  } 
+
+\secrev{
+  \citet{BuGeHyKeOcOzQu13} considered ALNS to be a form of a hyper-heuristics.
+  Different acceptance criteria have been tested within the framework of hyper-heuristics.
+  As an example, \citet{BuOzKo06} compared RW, HC, a version of HC with strict improvement required, GD, and a version of SA.
+  However, they did not reach any definite conclusions, and did not provide any evidence-based recommendations for which acceptance criterion to prefer.
+  The narrative literature review of \citep{BuGeHyKeOcOzQu13}, although summarising several other studies with comparisons of acceptance criteria, also did not provide any conclusions about the relative merit of the different criteria.
+}
+
+\rev{
+  For future research, our results indicate that it may be possible to obtain improved move acceptance criteria by basing the decisions not only on the solution quality, but also on the distance between the current and the candidate solution.
+  To the authors knowledge, such a concept has not been explored within the ALNS framework, but a similar idea can be found in skewed variable neighbourhood search \citep{hansen2001vns}.
+}
+
+\section*{Acknowledgements}
+
+\rev{The authors thank two anonymous referees for their helpful comments that led to several improvements of the original manuscript.} 
