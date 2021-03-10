@@ -1,0 +1,1 @@
+../template/as-preprint-template.cls
