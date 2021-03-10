@@ -71,6 +71,9 @@
 \newcommand{\setUrl}[1]{%
     \newcommand{\@asurl}{#1} % Save the article's url
 }
+\newcommand{\markAsPreprint}{%
+    \newcommand{\@aspreprint}{} % Flag to check whether this is a preprint
+}
 
 % Commands to print the cover page
 \newcommand{\printCover}{%
@@ -80,67 +83,72 @@
     \setlength{\fboxsep}{1em}
     \framebox[\linewidth]{\centering This preprint is available at \url{https://santini.in/}}\\[1em]
     
-    A final version of this preprint is published as follows:
+    \ifcsname @aspreprint\endcsname%
+        % Nothing
+    \else
     
-    \columnratio{0.2,0.8}
-    \newcounter{coverauthn}
-    \setcounter{coverauthn}{1}
-    \@whilenum{\value{coverauthn}<\value{authorn}}\do{
+        A final version of this preprint is published as follows:
+    
+        \columnratio{0.2,0.8}
+        \newcounter{coverauthn}
+        \setcounter{coverauthn}{1}
+        \@whilenum{\value{coverauthn}<\value{authorn}}\do{
+            \begin{paracol}{2}
+                {\bf Author \thecoverauthn:}
+            \switchcolumn
+                \@nameuse{@asauthorfirst\thecoverauthn} \@nameuse{@asauthorlast\thecoverauthn}
+            \end{paracol}
+            \stepcounter{coverauthn}
+        }
         \begin{paracol}{2}
-            {\bf Author \thecoverauthn:}
+            {\bf Journal:}
         \switchcolumn
-            \@nameuse{@asauthorfirst\thecoverauthn} \@nameuse{@asauthorlast\thecoverauthn}
+            \@asjournal
+            \ifcsname @asnumber\endcsname ~n.~\@asnumber\fi
+            \ifcsname @asvolume\endcsname ~(vol.~\@asvolume)\fi
+            \ifcsname @aspages\endcsname , pp.~\@aspages\fi
+            ~(\@asyear).
         \end{paracol}
-        \stepcounter{coverauthn}
-    }
-    \begin{paracol}{2}
-        {\bf Journal:}
-    \switchcolumn
-        \@asjournal
-        \ifcsname @asnumber\endcsname ~n.~\@asnumber\fi
-        \ifcsname @asvolume\endcsname ~(vol.~\@asvolume)\fi
-        \ifcsname @aspages\endcsname , pp.~\@aspages\fi
-        ~(\@asyear).
-    \end{paracol}
     
-    \vspace{1em}
+        \vspace{1em}
     
-    The final version is available at:\\
-    \url{\@asurl}
+        The final version is available at:\\
+        \url{\@asurl}
     
-    \vspace{3em}
+        \vspace{3em}
     
-    You can cite the final version of this paper as:
+        You can cite the final version of this paper as:
     
-    \setcounter{coverauthn}{1}
-    {\tt%
-        @article\{\@nameuse{@asauthorlast1}\@asyear,\\
-            \-\quad title=\{\@astitle\},\\
-            \-\quad journal=\{\@asjournal\},\\
-            \-\quad author=\{%
-            \@whilenum{\value{coverauthn}<\value{authorn}}\do{%
-                \@nameuse{@asauthorlast\thecoverauthn}, \@nameuse{@asauthorfirst\thecoverauthn}%
-                \stepcounter{coverauthn}%
-                \ifnum\thecoverauthn=\theauthorn%
-                    % Nothing
-                \else%
-                    ~and
-                \fi%
-            }\},\\
-            \ifcsname @asvolume\endcsname%
-            \-\quad volume=\{\@asvolume\},\\
-            \fi
-            \ifcsname @asnumber\endcsname%
-            \-\quad number=\{\@asnumber\},\\
-            \fi
-            \ifcsname @aspages\endcsname%
-            \-\quad pages=\{\@aspages\},\\
-            \fi
-            \ifcsname @asdoi\endcsname%
-            \-\quad doi=\{\@asdoi\},\\
-            \fi
-            \-\quad year=\{\@asyear\}\\
-        \}
-    }
+        \setcounter{coverauthn}{1}
+        {\tt%
+            @article\{\@nameuse{@asauthorlast1}\@asyear,\\
+                \-\quad title=\{\@astitle\},\\
+                \-\quad journal=\{\@asjournal\},\\
+                \-\quad author=\{%
+                \@whilenum{\value{coverauthn}<\value{authorn}}\do{%
+                    \@nameuse{@asauthorlast\thecoverauthn}, \@nameuse{@asauthorfirst\thecoverauthn}%
+                    \stepcounter{coverauthn}%
+                    \ifnum\thecoverauthn=\theauthorn%
+                        % Nothing
+                    \else%
+                        ~and
+                    \fi%
+                }\},\\
+                \ifcsname @asvolume\endcsname%
+                \-\quad volume=\{\@asvolume\},\\
+                \fi
+                \ifcsname @asnumber\endcsname%
+                \-\quad number=\{\@asnumber\},\\
+                \fi
+                \ifcsname @aspages\endcsname%
+                \-\quad pages=\{\@aspages\},\\
+                \fi
+                \ifcsname @asdoi\endcsname%
+                \-\quad doi=\{\@asdoi\},\\
+                \fi
+                \-\quad year=\{\@asyear\}\\
+            \}
+        }
+    \fi
     \clearpage\pagenumbering{arabic}
 }
