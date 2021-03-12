@@ -1,0 +1,68 @@
+\documentclass{as-preprint-template}
+
+\usepackage{amsmath,amsfonts}
+\usepackage[english]{babel}
+\usepackage[nameinlink,capitalise]{cleveref}
+\crefname{equation}{Constraint}{Constraints}
+
+% Tikz
+\usepackage{tikz}
+\usepackage{pgfplots}
+\usepackage{xifthen}
+\pgfplotsset{compat=1.13}
+
+% Subfigures
+\usepackage{caption}
+\usepackage{subcaption}
+
+% Bibliography management
+\usepackage[sort,numbers]{natbib}
+\bibliographystyle{abbrvnat}
+
+% Tables
+\usepackage{booktabs}
+\usepackage{rotating}
+
+% Shrinking with resizebox
+\usepackage{graphics}
+
+% In-paragraph enumeration
+\usepackage{paralist}
+
+\input{./definitions.tex}
+
+\setTitle{A Real-Time Conflict Solution Algorithm for the Train Rescheduling Problem}
+\addAuthor{Andrea}{Bettinelli}{Optit s.r.l., Italy\thanks{andrea.bettinelli@optit.it}}
+\addAuthor{Alberto}{Santini}{Universitat Pompeu Fabra, Spain\thanks{alberto.santini@upf.edu}}
+\addAuthor{Daniele}{Vigo}{Università di Bologna, Italy\thanks{daniele.vigo@unibo.it}}
+\setJournal{Transportation Research Part B: Methodological}
+\setPages{237--265}
+\setVolume{106}
+\setYear{2017}
+\setDoi{10.1016/j.trb.2017.10.005}
+\setUrl{https://www.sciencedirect.com/science/article/pii/S0191261516301151}
+
+\begin{document}
+  \printCover{}
+  \newpage{}
+  \maketitle{}
+
+  \abstract{%
+    We consider the real-time resolution of conflicts arising in real-world train management applications. In particular, given a nominal timetable for a set of trains and a set of modifications due to delays or other resources unavailability, we are aiming at defining a set of actions which must be implemented to grant safety, e.g., to avoid potential conflicts such as train collisions or headway violations, and restore quality by reducing the delays. To be compatible with real-time management, the required actions must be determined in a few seconds, hence specialized fast heuristics must be used.
+
+    We propose a fast and effective parallel algorithm that is based on an iterated greedy scheduling of trains on a time-space network. The algorithm uses several sortings to define the initial train dispatching rule and different shaking methods between iterations. The performance is further enhanced by using various sparsification methods for the time-space network. The best algorithm configuration is determined through extensive experiments, conducted on a set of instances derived from real-world networks and instances from the literature. The resulting heuristic proved able to consistently resolve the existing conflicts and obtaining excellent solution quality within just two seconds of computing time on a standard personal computer, for instances involving up to 151 trains and two hours of planning time horizon.
+  }
+
+  \input{./sections/introduction.tex}
+  \input{./sections/timetables.tex}
+  \input{./sections/literature_review.tex}
+  \input{./sections/model.tex}
+  \input{./sections/solution_algorithm.tex}
+  \input{./sections/computational_results.tex}
+  \input{./sections/conclusions.tex}
+
+  \appendix
+  \input{./sections/appendix.tex}
+
+  \bibliography{biblio}
+\end{document}

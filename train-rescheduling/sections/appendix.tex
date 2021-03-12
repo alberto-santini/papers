@@ -1,0 +1,303 @@
+\section{Detailed results}
+
+\Cref{tbl:tabu_res,tbl:vns_res} provide instance-by-instance results for Tabu and RVNS policies, respectively. Column ``Sorting'' specifies which was the sorting method employed in the thread that produced the overall best solution. Column ``Dev'', analogously to what presented in previous tables, is the ratio between the objective value produced by the parallel algorithm and the best known objective value for the same instance. Column ``Conflicts'' lists the number of hard and soft constraints violated in the produced solution. Column ``Inf Trains'' tells how many trains remain infeasible (i.e., with hard constraints violations). Column ``Mod Trains'' gives the number of trains whose schedules have been modified. Finally, column ``Avg Delay'' lists, in time units, the average delay (if $> 0$) or advance (if $< 0$) that a train reported when arriving at its destination. A \textdagger\ next to a deviation indicates the best deviation produced for the corresponding instance, for that time limit. When Tabu and RVNS attained the same deviation, the \textdagger\ is present in both tables.
+
+Notice that there are instances for which no method was able to resolve all Conflict timelicts (even when using a time limit of 60s). Manual inspection of these Conflict timelicts has Conflict timeirmed that they are, indeed, unavoidable.
+
+\Cref{tbl:tabu_res_ras,tbl:vns_res_ras} are analogous to \Cref{tbl:tabu_res,tbl:vns_res}, but provide detailed results relative to the RAS-based instances.
+
+\begin{table}[ht]\footnotesize
+    \begin{center}
+        \begin{tabular}{lllrrrrr}
+            \textbf{Test set} & \textbf{Instance} & \textbf{Sorting} & \textbf{Dev} & \textbf{Conflicts} & \textbf{Inf Trains} & \textbf{Mod Trains} & \textbf{Avg Delay} \\
+            \hline
+            \textbf{Tabu 2s progressive-2}
+            & N1 & Length & 0.20 & 0 & 0 & 9 & 94.14 \\
+            & N2 & Length & \textdagger0.13 & 0 & 0 & 15 & 198.53 \\
+            & N3 & Reverse congestion & \textdagger0.00 & 3 & 1 & 8 & 40.71 \\
+            & N4 & Congestion & \textdagger0.00 & 0 & 0 & 5 & 15.00 \\
+            & N5 & Random & \textdagger0.00 & 0 & 0 & 16 & 102.63 \\
+            & N6 & Congestion & \textdagger0.00 & 0 & 0 & 1 & 8.33 \\
+            & N7 & Length & \textdagger0.05 & 0 & 0 & 8 & 70.34 \\
+            & N8 & Congestion & \textdagger0.24 & 0 & 0 & 9 & 3.87 \\
+            & N9 & Congestion & \textdagger1.25 & 0 & 0 & 6 & 32.07 \\
+            & N10 & Congestion & 0.22 & 0 & 0 & 5 & 9.19 \\
+            & N11 & Congestion & \textdagger0.00 & 0 & 0 & 3 & 19.29 \\
+            & N12 & Congestion & \textdagger0.00 & 0 & 0 & 3 & 30.00 \\
+            & N13 & Congestion & \textdagger0.00 & 2 & 0 & 14 & 408.53 \\
+            & L1 & Random & \textdagger0.00 & 1 & 0 & 117 & -13.71 \\
+            & L2 & Reverse congestion & \textdagger0.10 & 0 & 0 & 96 & -39.17 \\
+            & L3 & Random & \textdagger0.00 & 2 & 0 & 113 & 87.02 \\
+            & L4 & Reverse congestion & 0.29 & 0 & 0 & 91 & 33.66 \\
+            & L5 & Length & 0.38 & 0 & 0 & 117 & 59.70 \\
+            & L6 & Length & 0.27 & 0 & 0 & 93 & 44.33 \\
+            & P1 & Reverse congestion & 0.47 & 0 & 0 & 54 & 243.21 \\
+            & P2 & Reverse congestion & \textdagger0.31 & 0 & 0 & 53 & 256.07 \\
+            & P3 & Congestion & 0.16 & 0 & 0 & 60 & 141.05 \\
+            & P4 & Random & 1.04 & 0 & 0 & 70 & 348.33 \\
+            \hline
+            & \textbf{Overall} & & 0.22 & 0.35 & 0.04 & 42.00 & 95.35 \\
+            \hline
+            \rule{0pt}{10ex}\hspace{-0.3em}
+            \textbf{Test set} & \textbf{Instance} & \textbf{Sorting} & \textbf{Dev} & \textbf{Conflicts} & \textbf{Inf Trains} & \textbf{Mod Trains} & \textbf{Avg Delay} \\
+            \hline
+            \textbf{Tabu 10s progressive-2}
+            & N1 & Reverse speed & 0.20 & 0 & 0 & 10 & 95.17 \\
+            & N2 & Conflict time & \textdagger0.00 & 0 & 0 & 15 & 192.35 \\
+            & N3 & Congestion & \textdagger0.00 & 3 & 1 & 9 & 49.29 \\
+            & N4 & Congestion & \textdagger0.00 & 0 & 0 & 5 & 15.00 \\
+            & N5 & Congestion & \textdagger0.00 & 0 & 0 & 16 & 102.63 \\
+            & N6 & Congestion & \textdagger0.00 & 0 & 0 & 1 & 8.33 \\
+            & N7 & Congestion & \textdagger0.01 & 0 & 0 & 9 & 70.34 \\
+            & N8 & Congestion & \textdagger0.24 & 0 & 0 & 9 & 3.87 \\
+            & N9 & Congestion & \textdagger0.38 & 0 & 0 & 8 & 10.34 \\
+            & N10 & Congestion & \textdagger0.22 & 0 & 0 & 5 & 9.19 \\
+            & N11 & Congestion & \textdagger0.00 & 0 & 0 & 3 & 19.29 \\
+            & N12 & Congestion & \textdagger0.00 & 0 & 0 & 3 & 30.00 \\
+            & N13 & Congestion & \textdagger0.00 & 2 & 0 & 14 & 305.74 \\
+            & L1 & Reverse congestion & \textdagger0.00 & 1 & 0 & 117 & -23.14 \\
+            & L2 & Reverse congestion & 0.09 & 0 & 0 & 96 & -42.23 \\
+            & L3 & Conflict time & \textdagger0.00 & 2 & 0 & 113 & 106.49 \\
+            & L4 & Reverse congestion & 0.17 & 0 & 0 & 91 & 28.85 \\
+            & L5 & Reverse speed & 0.29 & 0 & 0 & 118 & 73.71 \\
+            & L6 & Congestion & 0.12 & 0 & 0 & 93 & 30.34 \\
+            & P1 & Reverse speed & \textdagger0.00 & 0 & 0 & 54 & 233.84 \\
+            & P2 & Conflict time & \textdagger0.00 & 0 & 0 & 54 & 236.25 \\
+            & P3 & Congestion & \textdagger0.00 & 0 & 0 & 60 & 138.87 \\
+            & P4 & Reverse speed & \textdagger0.11 & 0 & 0 & 70 & 273.12 \\
+            \hline
+            & \textbf{Overall} & & 0.08 & 0.35 & 0.04 & 42.30 & 85.55 \\
+            \hline
+        \end{tabular}
+    \end{center}
+    \caption{Parallel algorithm results for the Tabu solver on the Alstom instances.}\label{tbl:tabu_res}
+\end{table}
+
+\begin{table}[ht]\footnotesize
+    \begin{center}
+        \begin{tabular}{lllrrrrr}
+            \textbf{Test set} & \textbf{Instance} & \textbf{Sorting} & \textbf{Dev} & \textbf{Conflicts} & \textbf{Inf Trains} & \textbf{Mod Trains} & \textbf{Avg Delay} \\
+            \hline
+            \textbf{RVNS 2s linear-2}
+            & N1 & Reverse congestion & \textdagger0.19 & 0 & 0 & 9 & 94.14 \\
+            & N2 & Reverse congestion & 0.26 & 0 & 0 & 14 & 229.41 \\
+            & N3 & Reverse congestion & \textdagger0.00 & 3 & 1 & 9 & 48.75 \\
+            & N4 & Reverse congestion & 0.07 & 0 & 0 & 5 & 15.00 \\
+            & N5 & Congestion & 0.41 & 0 & 0 & 15 & 273.95 \\
+            & N6 & Congestion & \textdagger0.00 & 0 & 0 & 1 & 8.33 \\
+            & N7 & Reverse speed & 0.10 & 0 & 0 & 7 & 88.45 \\
+            & N8 & Conflict time & 0.52 & 0 & 0 & 6 & 49.35 \\
+            & N9 & Conflict time & 0.25 & 0 & 0 & 7 & 20.69 \\
+            & N10 & Conflict time & \textdagger0.11 & 0 & 0 & 5 & 6.77 \\
+            & N11 & Congestion & \textdagger0.00 & 0 & 0 & 3 & 19.29 \\
+            & N12 & Congestion & \textdagger0.00 & 0 & 0 & 3 & 30.00 \\
+            & N13 & Congestion & \textdagger0.00 & 2 & 0 & 14 & 406.76 \\
+            & L1 & Conflict time & \textdagger0.00 & 1 & 0 & 118 & -5.25 \\
+            & L2 & Conflict time & 0.30 & 0 & 0 & 96 & -17.48 \\
+            & L3 & Reverse speed & \textdagger0.00 & 2 & 0 & 113 & 81.07 \\
+            & L4 & Reverse congestion & \textdagger0.23 & 0 & 0 & 93 & 36.87 \\
+            & L5 & Reverse speed & \textdagger0.26 & 0 & 0 & 120 & 49.17 \\
+            & L6 & Reverse speed & \textdagger0.23 & 0 & 0 & 94 & 55.63 \\
+            & P1 & Congestion & \textdagger0.00 & 0 & 0 & 54 & 235.71 \\
+            & P2 & Conflict time & 0.32 & 0 & 0 & 54 & 236.25 \\
+            & P3 & Conflict time & \textdagger0.08 & 0 & 0 & 60 & 150.97 \\
+            & P4 & Congestion & \textdagger0.81 & 0 & 0 & 70 & 284.38 \\
+            \hline
+            & \textbf{Overall} & & 0.35 & 0.35 & 0.04 & 42.17 & 104.27 \\
+            \hline
+            \rule{0pt}{10ex}\hspace{-0.3em}
+            \textbf{Test set} & \textbf{Instance} & \textbf{Sorting} & \textbf{Dev} & \textbf{Conflicts} & \textbf{Inf Trains} & \textbf{Mod Trains} & \textbf{Avg Delay} \\
+            \hline
+            \textbf{RVNS 10s progressive-3}
+            & N1 & Random & \textdagger0.13 & 0 & 0 & 9 & 97.76 \\
+            & N2 & Random & 0.12 & 0 & 0 & 15 & 198.53 \\
+            & N3 & Speed & \textdagger0.00 & 3 & 1 & 9 & 47.68 \\
+            & N4 & Congestion & \textdagger0.00 & 0 & 0 & 5 & 15.00 \\
+            & N5 & Conflict time & \textdagger0.00 & 0 & 0 & 16 & 101.05 \\
+            & N6 & Congestion & \textdagger0.00 & 0 & 0 & 1 & 8.33 \\
+            & N7 & Conflict time & 0.06 & 0 & 0 & 8 & 88.45 \\
+            & N8 & Speed & 1.45 & 0 & 0 & 7 & 28.55 \\
+            & N9 & Speed & 1.29 & 0 & 0 & 6 & 33.62 \\
+            & N10 & Congestion & 0.29 & 0 & 0 & 5 & 9.68 \\
+            & N11 & Congestion & \textdagger0.00 & 0 & 0 & 3 & 19.29 \\
+            & N12 & Congestion & \textdagger0.00 & 0 & 0 & 3 & 30.00 \\
+            & N13 & Random & \textdagger0.00 & 2 & 0 & 17 & 202.06 \\
+            & L1 & Conflict time & \textdagger0.00 & 1 & 0 & 116 & -21.96 \\
+            & L2 & Congestion & \textdagger0.06 & 0 & 0 & 96 & -46.75 \\
+            & L3 & Conflict time & \textdagger0.00 & 2 & 0 & 113 & 60.34 \\
+            & L4 & Conflict time & \textdagger0.03 & 0 & 0 & 82 & 19.01 \\
+            & L5 & Congestion & \textdagger0.15 & 0 & 0 & 114 & 14.21 \\
+            & L6 & Speed & \textdagger0.06 & 0 & 0 & 84 & 38.96 \\
+            & P1 & Congestion & \textdagger0.00 & 0 & 0 & 54 & 232.50 \\
+            & P2 & Conflict time & \textdagger0.00 & 0 & 0 & 54 & 234.91 \\
+            & P3 & Random & \textdagger0.00 & 0 & 0 & 60 & 134.52 \\
+            & P4 & Congestion & 0.81 & 0 & 0 & 70 & 284.38 \\
+            \hline
+            & \textbf{Overall} & & 0.19 & 0.35 & 0.04 & 41.17 & 79.57 \\
+            \hline
+        \end{tabular}
+    \end{center}
+    \caption{Parallel algorithm results for the RVNS solver on the Alstom instances.}\label{tbl:vns_res}
+\end{table}
+
+\begin{table}\footnotesize
+  \begin{center}
+    \begin{tabular}{llllrrrr}
+      \textbf{Test set} & \textbf{Instance} & \textbf{Sorting} & \textbf{\phantom{\textdagger}Dev} & \textbf{Conflicts} & \textbf{Inf Trains} & \textbf{Mod Trains} & \textbf{Avg Delay} \\
+      \hline
+      \textbf{Tabu 2s progressive-2}
+      & S-1-1 & Length & \phantom{\textdagger}$4.10 \cdot 10^{-2}$ & 0 & 0 & 5 & 200.20 \\
+      & S-1-2 & Reverse congestion & \textdagger$0$ & 0 & 0 & 4 & 109.23 \\
+      & S-1-3 & Length & \phantom{\textdagger}$3.32 \cdot 10^{-2}$ & 0 & 0 & 5 & 78.11 \\
+      & S-1-4 & Reverse congestion & \phantom{\textdagger}$2.55 \cdot 10^{-2}$ & 0 & 0 & 5 & 186.38 \\
+      & S-1-5 & Reverse congestion & \textdagger$0$ & 0 & 0 & 4 & 84.69 \\
+      & S-2-1 & Reverse congestion & \phantom{\textdagger}$3.37 \cdot 10^{-3}$ & 0 & 0 & 2 & 791 \\
+      & S-2-2 & Reverse congestion & \phantom{\textdagger}$3.44 \cdot 10^{-3}$ & 0 & 0 & 2 & 48.95 \\
+      & S-2-3 & Reverse congestion & \phantom{\textdagger}$7.26 \cdot 10^{-4}$ & 0 & 0 & 2 & 50.81 \\
+      & S-2-4 & Reverse congestion & \phantom{\textdagger}$1.16 \cdot 10^{-2}$ & 0 & 0 & 3 & 94.20 \\
+      & S-2-5 & Reverse congestion & \phantom{\textdagger}$7.11 \cdot 10^{-4}$ & 0 & 0 & 2 & 53.97 \\
+      & S-3-1 & Reverse congestion & \phantom{\textdagger}$1.99 \cdot 10^{-4}$ & 0 & 0 & 12 & 604.70 \\
+      & S-3-2 & Length & \phantom{\textdagger}$2.41 \cdot 10^{-4}$ & 0 & 0 & 1 & 16.96 \\
+      & S-3-3 & Length & \textdagger$0$ & 0 & 0 & 2 & 88.69 \\
+      & S-3-4 & Congestion & \phantom{\textdagger}$1.28 \cdot 10^{-2}$ & 0 & 0 & 7 & 95.06 \\
+      & S-3-5 & Congestion & \phantom{\textdagger}$4.89 \cdot 10^{-2}$ & 0 & 0 & 4 & 121.25 \\
+      & N-1-1 & Random & \phantom{\textdagger}$2.24 \cdot 10^{-4}$ & 0 & 0 & 5 & 168.34 \\
+      & N-1-2 & Length & \phantom{\textdagger}$1.13 \cdot 10^{-3}$ & 0 & 0 & 4 & 106.44 \\
+      & N-1-3 & Congestion & \phantom{\textdagger}$4.60 \cdot 10^{-4}$ & 0 & 0 & 3 & 82.44 \\
+      & N-1-4 & Random & \phantom{\textdagger}$1.16 \cdot 10^{-3}$ & 0 & 0 & 4 & 171.13 \\
+      & N-1-5 & Congestion & \phantom{\textdagger}$4.85 \cdot 10^{-4}$ & 0 & 0 & 5 & 96.89 \\
+      & N-2-1 & Random & \phantom{\textdagger}$2.22 \cdot 10^{-3}$ & 0 & 0 & 2 & 69.46 \\
+      & N-2-2 & Length & \textdagger$0$ & 0 & 0 & 4 & 97.16 \\
+      & N-2-3 & Length & \phantom{\textdagger}$1.82 \cdot 10^{-3}$ & 0 & 0 & 3 & 67.38 \\
+      & N-2-4 & Random & \textdagger$0$ & 0 & 0 & 4 & 153.92 \\
+      & N-2-5 & Length & \phantom{\textdagger}$9.13 \cdot 10^{-4}$ & 0 & 0 & 7 & 143.64 \\
+      & N-3-1 & Reverse congestion & \phantom{\textdagger}$2.11 \cdot 10^{-2}$ & 0 & 0 & 13 & 690.42 \\
+      & N-3-2 & Reverse congestion & \phantom{\textdagger}$1.95 \cdot 10^{-4}$ & 0 & 0 & 1 & 17.13 \\
+      & N-3-3 & Reverse congestion & \textdagger$0$ & 0 & 0 & 2 & 106.09 \\
+      & N-3-4 & Congestion & \phantom{\textdagger}$8.59 \cdot 10^{-2}$ & 0 & 0 & 10 & 162.78 \\
+      & N-3-5 & Random & \phantom{\textdagger}$3.64 \cdot 10^{-4}$ & 0 & 0 & 4 & 119.06 \\
+      \hline
+      & \textbf{Overall} & & \phantom{\textdagger}$9.92 \cdot 10^{-3}$ & 0 & 0 & 4.37 & 138.55 \\
+      \hline
+      \rule{0pt}{5ex}\hspace{-0.3em}
+      \textbf{Test set} & \textbf{Instance} & \textbf{Sorting} & \textbf{\phantom{\textdagger}Dev} & \textbf{Conflicts} & \textbf{Inf Trains} & \textbf{Mod Trains} & \textbf{Avg Delay} \\
+      \hline
+      \textbf{Tabu 10s progressive-2}
+      & S-1-1 & Reverse congestion & \phantom{\textdagger}$5.62 \cdot 10^{-2}$ & 0 & 0 & 5 & 205.71 \\
+      & S-1-2 & Reverse congestion & \textdagger$0$ & 0 & 0 & 4 & 109.23 \\
+      & S-1-3 & Reverse congestion & \phantom{\textdagger}$3.32 \cdot 10^{-2}$ & 0 & 0 & 5 & 78.11 \\
+      & S-1-4 & Congestion & \phantom{\textdagger}$2.38 \cdot 10^{-2}$ & 0 & 0 & 5 & 185.61 \\
+      & S-1-5 & Reverse speed & \textdagger$0$ & 0 & 0 & 4 & 84.69 \\
+      & S-2-1 & Reverse speed & \phantom{\textdagger}$3.37 \cdot 10^{-3}$ & 0 & 0 & 2 & 70.91 \\
+      & S-2-2 & Congestion & \phantom{\textdagger}$3.44 \cdot 10^{-3}$ & 0 & 0 & 2 & 48.95 \\
+      & S-2-3 & Congestion & \phantom{\textdagger}$7.26 \cdot 10^{-4}$ & 0 & 0 & 2 & 50.81 \\
+      & S-2-4 & Congestion & \phantom{\textdagger}$9.02 \cdot 10^{-4}$ & 0 & 0 & 3 & 78.43 \\
+      & S-2-5 & Congestion & \phantom{\textdagger}$7.11 \cdot 10^{-4}$ & 0 & 0 & 2 & 53.97 \\
+      & S-3-1 & Reverse speed & \phantom{\textdagger}$1.99 \cdot 10^{-4}$ & 0 & 0 & 12 & 604.70 \\
+      & S-3-2 & Congestion & \phantom{\textdagger}$2.41 \cdot 10^{-4}$ & 0 & 0 & 1 & 16.96 \\
+      & S-3-3 & Congestion & \textdagger$0$ & 0 & 0 & 2 & 117.50 \\
+      & S-3-4 & Congestion & \phantom{\textdagger}$1.28 \cdot 10^{-2}$ & 0 & 0 & 7 & 95.06 \\
+      & S-3-5 & Congestion & \textdagger$0$ & 0 & 0 & 3 & 109.17 \\
+      & N-1-1 & Reverse congestion & \phantom{\textdagger}$2.24 \cdot 10^{-4}$ & 0 & 0 & 5 & 168.34 \\
+      & N-1-2 & Reverse congestion & \phantom{\textdagger}$1.13 \cdot 10^{-3}$ & 0 & 0 & 4 & 106.44 \\
+      & N-1-3 & Reverse congestion & \phantom{\textdagger}$4.60 \cdot 10^{-4}$ & 0 & 0 & 3 & 82.44 \\
+      & N-1-4 & Conflict time & \phantom{\textdagger}$1.16 \cdot 10^{-3}$ & 0 & 0 & 4 & 171.13 \\
+      & N-1-5 & Conflict time & \phantom{\textdagger}$4.85 \cdot 10^{-4}$ & 0 & 0 & 5 & 96.89 \\
+      & N-2-1 & Conflict time & \phantom{\textdagger}$2.22 \cdot 10^{-3}$ & 0 & 0 & 2 & 69.46 \\
+      & N-2-2 & Conflict time & \textdagger$0$ & 0 & 0 & 4 & 97.16 \\
+      & N-2-3 & Conflict time & \phantom{\textdagger}$1.82 \cdot 10^{-3}$ & 0 & 0 & 3 & 67.38 \\
+      & N-2-4 & Conflict time & \phantom{\textdagger}$0$ & 0 & 0 & 4 & 153.92 \\
+      & N-2-5 & Conflict time & \textdagger$9.13 \cdot 10^{-4}$ & 0 & 0 & 7 & 143.64 \\
+      & N-3-1 & Reverse speed & \phantom{\textdagger}$4.53 \cdot 10^{-4}$ & 0 & 0 & 12 & 657.50 \\
+      & N-3-2 & Conflict time & \phantom{\textdagger}$1.95 \cdot 10^{-4}$ & 0 & 0 & 1 & 17.13 \\
+      & N-3-3 & Conflict time & \textdagger$0$ & 0 & 0 & 2 & 106.09 \\
+      & N-3-4 & Reverse speed & \phantom{\textdagger}$3.47 \cdot 10^{-2}$ & 0 & 0 & 8 & 116.63 \\
+      & N-3-5 & Conflict time & \phantom{\textdagger}$3.64 \cdot 10^{-4}$ & 0 & 0 & 4 & 119.06 \\
+      \hline
+      & \textbf{Overall} & & \phantom{\textdagger}$5.99 \cdot 10^{-3}$ & 0 & 0 & 4.23 & 136.10 \\
+      \hline
+    \end{tabular}
+  \end{center}
+  \caption{Parallel algorithm results for the Tabu solver on the RAS-based instances.}\label{tbl:tabu_res_ras}
+\end{table}
+
+\begin{table}\footnotesize
+  \begin{center}
+    \begin{tabular}{llllrrrr}
+      \textbf{Test set} & \textbf{Instance} & \textbf{Sorting} & \textbf{\phantom{\textdagger}Dev} & \textbf{Conflicts} & \textbf{Inf Trains} & \textbf{Mod Trains} & \textbf{Avg Delay} \\
+      \hline
+      \textbf{RVNS 2s linear-2}
+      & S-1-1 & Reverse speed & \phantom{\textdagger}$5.51 \cdot 10^{-2}$ & 0 & 0 & 5 & 204.39 \\
+      & S-1-2 & Conflict time & \phantom{\textdagger}$5.37 \cdot 10^{-2}$ & 0 & 0 & 4 & 117.14 \\
+      & S-1-3 & Reverse speed & \textdagger$2.04 \cdot 10^{-2}$ & 0 & 0 & 5 & 73.57 \\
+      & S-1-4 & Reverse speed & \phantom{\textdagger}$3.69 \cdot 10^{-2}$ & 0 & 0 & 5 & 190.15 \\
+      & S-1-5 & Conflict time & \phantom{\textdagger}$1.28 \cdot 10^{-2}$ & 0 & 0 & 4 & 88.57 \\
+      & S-2-1 & Conflict time & \textdagger$0$ & 0 & 0 & 2 & 70.05 \\
+      & S-2-2 & Conflict time & \textdagger$0$ & 0 & 0 & 2 & 47.51 \\
+      & S-2-3 & Conflict time & \phantom{\textdagger}$7.26 \cdot 10^{-4}$ & 0 & 0 & 2 & 50.81 \\
+      & S-2-4 & Conflict time & \phantom{\textdagger}$9.02 \cdot 10^{-4}$ & 0 & 0 & 3 & 78.43 \\
+      & S-2-5 & Conflict time & \phantom{\textdagger}$1.42 \cdot 10^{-4}$ & 0 & 0 & 2 & 53.40 \\
+      & S-3-1 & Reverse speed & \textdagger$0$ & 0 & 0 & 12 & 604.23 \\
+      & S-3-2 & Conflict time & \phantom{\textdagger}$7.22 \cdot 10^{-4}$ & 0 & 0 & 1 & 17.20 \\
+      & S-3-3 & Conflict time & \textdagger$0$ & 0 & 0 & 2 & 117.50 \\
+      & S-3-4 & Conflict time & \phantom{\textdagger}$3.57 \cdot 10^{-2}$ & 0 & 0 & 8 & 106.61 \\
+      & S-3-5 & Conflict time & \phantom{\textdagger}$1.17 \cdot 10^{-3}$ & 0 & 0 & 3 & 108.69 \\
+      & N-1-1 & Conflict time & \phantom{\textdagger}$5.81 \cdot 10^{-1}$ & 0 & 0 & 3 & 314.07 \\
+      & N-1-2 & Congestion & \textdagger$0$ & 0 & 0 & 4 & 106.27 \\
+      & N-1-3 & Conflict time & \phantom{\textdagger}$5.06 \cdot 10^{-3}$ & 0 & 0 & 3 & 84.08 \\
+      & N-1-4 & Conflict time & \phantom{\textdagger}$1.45 \cdot 10^{-3}$ & 0 & 0 & 4 & 171.13 \\
+      & N-1-5 & Conflict time & \phantom{\textdagger}$5.10 \cdot 10^{-3}$ & 0 & 0 & 5 & 98.41 \\
+      & N-2-1 & Conflict time & \phantom{\textdagger}$1.78 \cdot 10^{-3}$ & 0 & 0 & 2 & 69.36 \\
+      & N-2-2 & Conflict time & \phantom{\textdagger}$6.33 \cdot 10^{-4}$ & 0 & 0 & 4 & 97.68 \\
+      & N-2-3 & Conflict time & \phantom{\textdagger}$3.03 \cdot 10^{-4}$ & 0 & 0 & 3 & 66.86 \\
+      & N-2-4 & Conflict time & \phantom{\textdagger}$3.83 \cdot 10^{-4}$ & 0 & 0 & 4 & 154.45 \\
+      & N-2-5 & Congestion & \phantom{\textdagger}$6.64 \cdot 10^{-4}$ & 0 & 0 & 7 & 143.75 \\
+      & N-3-1 & Reverse speed & \textdagger$0$ & 0 & 0 & 12 & 657.15 \\
+      & N-3-2 & Conflict time & \phantom{\textdagger}$1.95 \cdot 10^{-4}$ & 0 & 0 & 1 & 17.13 \\
+      & N-3-3 & Conflict time & \textdagger$0$ & 0 & 0 & 2 & 106.09 \\
+      & N-3-4 & Conflict time & \phantom{\textdagger}$4.53 \cdot 10^{-2}$ & 0 & 0 & 7 & 125.96 \\
+      & N-3-5 & Reverse speed & \phantom{\textdagger}$9.09 \cdot 10^{-4}$ & 0 & 0 & 4 & 119.21 \\
+      \hline
+      & \textbf{Overall} & & \phantom{\textdagger}$2.87 \cdot 10^{-2}$ & 0 & 0 & 4.16 & 141.99 \\
+      \hline
+      \rule{0pt}{5ex}\hspace{-0.3em}
+      \textbf{Test set} & \textbf{Instance} & \textbf{Sorting} & \textbf{\phantom{\textdagger}Dev} & \textbf{Conflicts} & \textbf{Inf Trains} & \textbf{Mod Trains} & \textbf{Avg Delay} \\
+      \hline
+      \textbf{RVNS 10s progressive-3}
+      & S-1-1 & Congestion & \textdagger$0$ & 0 & 0 & 5 & 185.71 \\
+      & S-1-2 & Length & \phantom{\textdagger}$2.90 \cdot 10^{-2}$ & 0 & 0 & 4 & 113.67 \\
+      & S-1-3 & Speed & \phantom{\textdagger}$3.22 \cdot 10^{-2}$ & 0 & 0 & 5 & 77.76 \\
+      & S-1-4 & Length & \textdagger$2.05 \cdot 10^{-2}$ & 0 & 0 & 5 & 184.59 \\
+      & S-1-5 & Speed & \phantom{\textdagger}$3.02 \cdot 10^{-4}$ & 0 & 0 & 4 & 84.74 \\
+      & S-2-1 & Speed & \phantom{\textdagger}$3.37 \cdot 10^{-3}$ & 0 & 0 & 2 & 70.91 \\
+      & S-2-2 & Speed & \textdagger$0$ & 0 & 0 & 2 & 47.51 \\
+      & S-2-3 & Speed & \textdagger$0$ & 0 & 0 & 2 & 50.24 \\
+      & S-2-4 & Speed & \textdagger$0$ & 0 & 0 & 3 & 77.10 \\
+      & S-2-5 & Speed & \textdagger$0$ & 0 & 0 & 2 & 53.25 \\
+      & S-3-1 & Length & \phantom{\textdagger}$1.66 \cdot 10^{-4}$ & 0 & 0 & 12 & 604.58 \\
+      & S-3-2 & Speed & \textdagger$0$ & 0 & 0 & 1 & 16.96 \\
+      & S-3-3 & Speed & \textdagger$0$ & 0 & 0 & 2 & 117.50 \\
+      & S-3-4 & Congestion & \textdagger$0$ & 0 & 0 & 8 & 85.42 \\
+      & S-3-5 & Congestion & \phantom{\textdagger}$2.35 \cdot 10^{-4}$ & 0 & 0 & 3 & 108.69 \\
+      & N-1-1 & Congestion & \textdagger$0$ & 0 & 0 & 5 & 168.25 \\
+      & N-1-2 & Congestion & \phantom{\textdagger}$1.13 \cdot 10^{-3}$ & 0 & 0 & 4 & 106.44 \\
+      & N-1-3 & Congestion & \textdagger$0$ & 0 & 0 & 3 & 82.27 \\
+      & N-1-4 & Length & \textdagger$0$ & 0 & 0 & 4 & 170.62 \\
+      & N-1-5 & Length & \textdagger$0$ & 0 & 0 & 5 & 96.72 \\
+      & N-2-1 & Random & \textdagger$0$ & 0 & 0 & 2 & 68.94 \\
+      & N-2-2 & Length & \phantom{\textdagger}$5.06 \cdot 10^{-4}$ & 0 & 0 & 4 & 97.58 \\
+      & N-2-3 & Length & \textdagger$0$ & 0 & 0 & 3 & 66.76 \\
+      & N-2-4 & Length & \phantom{\textdagger}$1.53 \cdot 10^{-4}$ & 0 & 0 & 4 & 154.13 \\
+      & N-2-5 & Length & \textdagger$0$ & 0 & 0 & 7 & 142.91 \\
+      & N-3-1 & Length & \phantom{\textdagger}$2.34 \cdot 10^{-2}$ & 0 & 0 & 12 & 697.16 \\
+      & N-3-2 & Speed & \textdagger$0$ & 0 & 0 & 1 & 17.08 \\
+      & N-3-3 & Speed & \textdagger$0$ & 0 & 0 & 2 & 106.14 \\
+      & N-3-4 & Speed & \textdagger$1.36 \cdot 10^{-2}$ & 0 & 0 & 7 & 98.21 \\
+      & N-3-5 & Speed & \textdagger$0$ & 0 & 0 & 4 & 118.86 \\
+      \hline
+      & \textbf{Overall} & & \phantom{\textdagger}$4.15 \cdot 10^{-3}$ & 0 & 0 & 4.23 & 135.69 \\
+      \hline
+    \end{tabular}
+  \end{center}
+  \caption{Parallel algorithm results for the RVNS solver on the RAS-based instances.}\label{tbl:vns_res_ras}
+\end{table}

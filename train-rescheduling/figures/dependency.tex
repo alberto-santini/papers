@@ -1,0 +1,40 @@
+\begin{tikzpicture}
+	\usetikzlibrary{decorations.pathreplacing}
+	\usetikzlibrary{positioning}
+	
+	\node[red] at (-1,3) {$\node$};
+	
+	\draw[blue,decorate,decoration={brace,mirror,amplitude=10pt}] (-0.25,6.5) -- (-0.25,-0.5);
+	
+	\node[blue] at (0,6) {$\stnode^\textup{L}_1$};
+	\node[blue] at (0,4) {$\stnode^\textup{L}_2$};
+	\node[blue] at (0,2) {$\stnode^\textup{R}_1$};
+	\node[blue] at (0,0) {$\stnode^\textup{R}_2$};
+	
+	\draw[->,blue] (1.5,7) -- (12,7) node[midway,fill=white] {time};
+	
+	\foreach \x in {1,...,8} {
+		\foreach \y in {0,...,3} {
+			\ifthenelse{6 = \x \AND 2 = \y}{}{\node at (1.5*\x,2*\y) (n\x\y) {\textopenbullet};}
+		}
+	}
+	
+	\tikzstyle{relevant}=[circle,fill,minimum size=0.25cm,inner sep=0pt];
+	\node[relevant,red] at (1.5,6) (arr1) {};
+	\node[relevant,red] at (9,2) (dep1) {};
+	\node[relevant,orange] at (4.5,4) (arr2) {};
+	\node[relevant,orange] at (10.5,0) (dep2) {};
+
+	\node[red,above=0.025cm of n13] {Arrival of $\train_1$};
+	\node[red,above=0.02cm of n61,xshift=1.275cm] {Departure of $\train_1$};
+	\node[orange,below=0.025cm of n32,xshift=-0.75cm] {Arrival of $\train_2$};
+	\node[orange,above=0.025cm of n70,xshift=1cm] {Departure of $\train_2$};
+
+	\draw[red,thick,->] (n13) -- (n61);
+	\draw[orange,thick,->] (n32) -- (n70);
+	
+	\draw (n32) -- (n33);
+	\draw (n61) -- (n63);
+	
+	\draw[<->] (4.5,5) -- (9,5) node[midway,fill=white] {\scriptsize Resolution time};
+\end{tikzpicture}

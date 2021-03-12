@@ -1,0 +1,44 @@
+\begin{tikzpicture}
+	\usetikzlibrary{decorations.pathreplacing}
+	
+	\node[red] at (-1,5) {$\node_1$};
+	\node[red] at (-1,1) {$\node_2$};
+	
+	\draw[blue,decorate,decoration={brace,mirror,amplitude=10pt}] (-0.25,6.5) -- (-0.25,3.5);
+	\draw[blue,decorate,decoration={brace,mirror,amplitude=10pt}] (-0.25,2.5) -- (-0.25,-0.5);
+	
+	\node[blue] at (0,6) {$\stnode^\textup{L}_1$};
+	\node[blue] at (0,4) {$\stnode^\textup{R}_1$};
+	\node[blue] at (0,2) {$\stnode^\textup{L}_2$};
+	\node[blue] at (0,0) {$\stnode^\textup{R}_2$};
+	
+	\draw[->,blue] (1.5,7) -- (12,7) node[midway,fill=white] {time};
+	
+	\foreach \x in {1,...,8}
+		\foreach \y in {0,...,3}
+			\node at (1.5*\x,2*\y) (n\x\y) {\textopenbullet};
+			
+	\foreach \x in {1,...,6}
+	{
+		\pgfmathtruncatemacro{\r}{\x+1};
+		\pgfmathtruncatemacro{\s}{\x+2};
+		\draw[black!50,->] (n\x3) -- (n\r2);
+		\draw[black!50,->] (n\x3) -- (n\s2);
+	}
+	\draw[black!50,->] (n73) -- (n82);
+	
+	\foreach \x in {1,...,8}
+	{
+		\draw[black!50,->] (n\x2) -- (n\x1);
+	}
+	
+	\foreach \x in {1,...,5}
+	{
+		\pgfmathtruncatemacro{\r}{\x+1};
+		\pgfmathtruncatemacro{\s}{\x+3};
+		\draw[black!50,->] (n\x1) -- (n\r0);
+		\draw[black!50,->] (n\x1) -- (n\s0);
+	}
+	\draw[black!50,->] (n61) -- (n70);
+	\draw[black!50,->] (n71) -- (n80);
+\end{tikzpicture}

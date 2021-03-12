@@ -1,0 +1,29 @@
+\begin{tikzpicture}
+	\usetikzlibrary{decorations.pathreplacing}
+	
+	\node[red] at (-1,1) {$\node$};
+	
+	\draw[blue,decorate,decoration={brace,mirror,amplitude=10pt}] (-0.25,2.5) -- (-0.25,-0.5);
+	
+	\node[blue] at (0,2) {$\stnode_\textup{L}$};
+	\node[blue] at (0,0) {$\stnode_\textup{R}$};
+	
+	\draw[->,blue] (1.5,3) -- (12,3) node[midway,fill=white] {time};
+	
+	\foreach \x in {1,...,8}
+		\foreach \y in {0,...,1}
+			\node at (1.5*\x,2*\y) (n\x\y) {\textopenbullet};
+			
+	\foreach \x in {1,...,5}
+	{
+		\pgfmathtruncatemacro{\r}{\x+1};
+		\pgfmathtruncatemacro{\s}{\x+3};
+		\draw[black!50,->] (n\x1) -- (n\r0);
+		\draw[black!50,->] (n\x1) -- (n\s0);
+	}
+	\draw[black!50,->] (n61) -- (n70);
+	\draw[black!50,->] (n71) -- (n80);
+	
+	\draw[red,thick,->] (n41) -- (n50) node[midway,xshift=0.1cm,yshift=0.3cm] {$\train_1$};
+	\draw[orange,thick,->] (n31) -- (n60) node[midway,xshift=-0.3cm,yshift=-0.1cm] {$\train_2$};
+\end{tikzpicture}

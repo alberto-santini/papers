@@ -1,0 +1,7 @@
+\begin{tikzpicture}
+  \begin{axis}[axis lines = middle, axis equal, grid = both, xlabel = {Delay}, ylabel = {Cost}]
+    \addplot coordinates{(0,0) (4,2)};
+    \pgfplotsset{cycle list shift=-1} % Re-use the same style as the first plot
+    \addplot coordinates{(4,5) (8,5)};
+  \end{axis}
+\end{tikzpicture}
