@@ -1,0 +1,619 @@
+\documentclass{as-preprint-template}
+
+\usepackage[inline,shortlabels]{enumitem}
+\usepackage{amsmath,amsfonts}
+\usepackage{fontspec}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{algorithm,algorithmicx}
+\usepackage[noend]{algpseudocode}
+\usepackage{cleveref}
+\usepackage{booktabs}
+
+\usepackage[backend=biber,dashed=false,maxcitenames=2,maxbibnames=99,citestyle=authoryear,hyperref=true,style=authoryear,uniquelist=minyear]{biblatex}
+\addbibresource{decomposition.bib}
+
+\setTitle{Decomposition strategies for vehicle routing heuristics}
+\setYear{2021}
+\setUrl{https://santini.in/files/papers/santini-schneider-vidal-vigo-2021}
+\markAsPreprint{}
+\addAuthor{Alberto}{Santini\thanks{alberto.santini@upf.edu}}{Department of Economics and Business, Universitat Pompeu Fabra, Barcelona, Spain}
+\addAuthor{Michael}{Schneider\thanks{schneider@dpo.rwth-aachen.de}}{Deutsche Post Chair - Optimization of Distribution Networks, RWTH Aachen University, Germany}
+\addAuthor{Thibaut}{Vidal\thanks{vidalt@inf.puc-rio.br}}{Department of Computer Science, Pontifical Catholic University of Rio de Janeiro, Brazil}
+\addAuthor{Daniele}{Vigo\thanks{daniele.vigo@unibo.it}}{DEI and CIRI-ICT, Alma Mater University of Bologna, Italy}
+
+\begin{document}
+  \printCover{}
+  \newpage{}
+  \maketitle{}
+
+\begin{abstract}
+    Decomposition techniques are an important component of modern heuristics for large instances of vehicle routing problems.
+    The current literature lacks a characterisation of decomposition strategies and a systematic investigation of their impact when integrated into state-of-the-art heuristics.
+    This paper fills this gap: we discuss the main characteristics of decomposition techniques in vehicle routing heuristics, highlight their strengths and weaknesses, and derive a set of desirable properties.
+    Through an extensive numerical campaign, we investigate the impact of decompositions within the Hybrid Genetic Search of Vidal et al.~(2012) for the capacitated vehicle routing problem.
+    We evaluate the quality of popular decomposition techniques from the literature and propose new strategies that outperform existing methods.
+    Our results also confirm the validity of the desirable properties identified in the analysis of the literature.
+    
+    {\bf Keywords: vehicle routing; heuristics; decomposition methods} 
+\end{abstract}
+
+\section{Introduction}
+
+Vehicle Routing Problems (VRPs) call for the determination of minimum-cost vehicle routes to service a set of clients dispersed geographically.
+Due to their practical relevance for distribution logistics and notorious difficulty, VRPs have been the focus of extensive research, counting hundreds of papers proposing exact and heuristic solution methods \parencite[see, e.g.,][]{toth+v14,Vidal2019}.
+Despite significant advances in exact solution approaches over recent years \parencite[see, e.g.,][]{Pecin+2017,Costa:2019,Pessoa+2019}, metaheuristics still remain indispensable for many VRP variants with complicating attributes arising from practical applications (additional decisions, constraints and objectives) and for large-scale cases \parencite{VidalMAVRP2013}.
+
+In the heuristic domain, decomposition techniques have proven their worth in solving large \parencite[see, e.g.,][]{Groer2011,Vidal2012b,uchoa2017new} or very large VRP instances \parencite[see, e.g.,][]{ARNOLD2019}, and they are also successfully used to boost the performance of heuristics on medium-sized instances \parencite{Goeke2017}.
+Decomposition strategies are widely used in practice, as they generally lead to more structured and intuitive routing plans.
+However, we are not aware of a systematic characterisation and investigation of the performance of different decomposition techniques for VRPs. 
+In this paper, we aim to fill this gap with a twofold contribution: 
+\begin{enumerate}[leftmargin=*]
+    \item We discuss some fundamental characteristics of heuristic decomposition techniques for VRPs and link these characteristics to recent papers on this topic.
+    We adopt a broader perspective on decomposition techniques and include:
+    \begin{enumerate}
+        \item Methods that repeatedly decompose the instances into smaller subproblems solved separately, and merge the solutions of the subproblems to obtain a complete solution of the original problem \parencite[see, e.g.,][]{Bent2010,Groer2011,vidal2013hybrid}.
+        \item \emph{Coarsening and aggregation} methods that fix arcs to join together nodes \parencite[see, e.g.,][]{Walshaw2002a,SANTINI2019154,RODRIGUESDEHOLANDAMAIA2020104995}, resulting in an effective decrease of the number of customers considered in the problem.
+        \item \emph{Ruin-and-recreate} methods \parencite[see, e.g.,][]{Shaw1998,schrimpf2000record,Ropke2006a,Ropke2006b}, which temporarily keep a set of customers and arcs as fixed, and attempt to rearrange the rest of the decision variables.
+        \end{enumerate}
+   \item We experimentally investigate the impact of different decomposition techniques within a state-of-the-art metaheuristic for the Capacitated VRP (CVRP) to draw methodological guidelines for future applications.
+   In particular, we evaluate the performance of the popular Hybrid Genetic Search heuristic \parencite{vidalOR} using different decomposition techniques.
+   We focus the scope of our experiments to \emph{robust} decompositions (see \Cref{ssec:nature}), that create subproblems of the same nature as the original problem and permit to use the same solver for the main problem and the subproblems.
+   We rely on the large-scale instances of \cite{uchoa2017new}, which possess very diverse characteristics (e.g., customer distribution, route length, depot positioning, demand patterns) and still represent a challenge for modern metaheuristics. 
+\end{enumerate}
+
+We draw our experiments on the CVRP as it is the canonical variant of the VRP family. The CVRP can be formally defined on a complete undirected graph $G = (V, E)$, where $V = \{0\} \cup V'$ is the set of locations, containing a depot node $0$ and a set of customers $V' = \{1,\dots,n\}$, and $E$ is the set of all edges between locations.
+Each customer $v \in V'$ has a demand of $q_v \geq 0$ units.
+Each edge $(u,v) \in E$ represents the possibility of travelling between locations $u$ and $v$ at a cost $c_{u v}$.
+In the context of this work, we also assume that the geographical coordinates $(x_u, y_u)$ of each location $u \in V$ are known.
+A fleet of $p$ identical vehicles with capacity $Q$ is available to serve the customers.
+The goal of the CVRP is to determine up to $p$ routes, each route starting at the depot, visiting a sequence of customers and returning to the depot, in such a way that the total customer demand in each route does not exceed the vehicle's capacity, that each customer is visited once, and that the total travel cost is minimised.
+
+The remainder of this paper is structured as follows.
+In \Cref{sec-nomenclature}, we discuss the main characteristics of heuristic decomposition techniques and illustrate this characterisation on a number of recent works.
+In \Cref{sec-experiment}, we give a detailed description of the decomposition methods considered in our numerical analyses.
+In \Cref{sec-computational}, we present our experimental result and discuss a number of design recommendations.
+Finally, in \Cref{sec-conclusions}, we conclude the paper and highlight future research directions.
+
+\section{Characteristics of decomposition techniques}\label{sec-nomenclature}
+
+Heuristic decomposition strategies stem from the divide-and-conquer principle.
+They consist in defining one or several subproblems in such a way that their solution contributes to the solution of a complex original problem, either by producing a new solution, improving an existing one, or by identifying promising or unpromising regions of the search space.
+Decomposition techniques are intimately connected to \emph{projection} strategies \parencite[see, e.g.,][]{Geoffrion1970,Geoffrion1970a}, which involve fixing some of the decision variables to focus the search in a smaller subspace.
+
+With this view in mind, heuristic decomposition techniques may be characterised in relation to:
+\begin{enumerate}[nosep]
+\item the nature of the subproblems formed by the decomposition;
+\item the information used to define the subproblems; 
+\item the solution methods for the subproblems;
+\item the ways the subproblem solutions are used to solve the master problem.
+\end{enumerate}
+We will now discuss these aspects in more detail and position recent works in relation to them.
+
+\subsection{Nature of the subproblems}\label{ssec:nature}
+
+\paragraph{Robust or non-robust decomposition.}
+A decomposition will be called \emph{robust} if it leads to subproblems that retain the same definition and structure as the original one.
+Such a decompositions permits to use a single solution approach recursively.
+In contrast, a \emph{non-robust} decomposition may require tailored techniques for the solution of the subproblems.
+Decompositions based on customer partitions are usually robust and lead to vehicle routing problems of a smaller scale.
+In contrast, some decompositions that aggregate successive customers into bigger nodes \parencite{Walshaw2002a,Chevalier2009} are non-robust, since the ``macro'' nodes representing these visit sequences in the subproblem may be visited in two possible directions (a feature called ``mode choice'', which is typical of arc-routing problems \parencite{VidalArcRouting}).
+
+\paragraph{Independent or dependent subproblems.}
+Many decompositions form multiple subproblems at the same time. The subproblems are \emph{independent} when the objective value and feasibility of one subproblem does not depend on the others.
+Most decomposition techniques based on customer partitions \parencite[e.g.,][]{Taillard1993a,vidal2013hybrid,Goeke2017}, called partitional decompositions in this paper, induce independent subproblems.
+
+There exist some exceptions though. 
+For example, \cite{Groer2011} assign all customers of a route to one of two subproblems if the route has at least one customer lying in the corresponding half-plane.
+Customers located in routes at the intersection of the half-planes appear in both subproblems.
+In the presence of side constraints, partitional decomposition may no longer form independent subproblems.
+Examples are workload balancing between routes, levels of service for some subsets of customers \parencite{Bulhoes2018}, or consistency constraints \parencite{Groer2008}.
+Finally, even a global fleet-size limit may introduce some dependencies between the subproblems.
+To avoid this dependency, one can define a maximum number of vehicles for each subproblem in a manner that is consistent with the global limit.
+
+Another class of decomposition methods which produces dependent subproblems is that of ruin-and-recreate algorithms \parencite{Shaw1998,schrimpf2000record,Ropke2006a,Ropke2006b}.
+These algorithms improve the solutions by iteratively ruining a part of the solution while the rest remains fixed.
+This is equivalent to a decomposition approach which iteratively generates and solves smaller subproblems.
+As there can be overlap between the ruined parts from one iteration to the next, the solution of these subproblems is typically done sequentially.
+
+Overall, independent decompositions are usually desirable, as they allow high-level parallelism to reduce wall-clock time and permit to combine the solutions of the subproblems (see Section \ref{sec:use-solutions}) in a straightforward way.
+
+\subsection{Information used to define the subproblems}\label{sec:info-subproblems}
+
+Decomposition approaches are usually designed to obey three main principles:
+\begin{enumerate}[nosep]
+\item Variable fixings induced by the decomposition (as seen in terms of fixed or prohibited arcs) should be supported in high-quality solutions;
+\item The free decision variables of the subproblem should not be too few or too numerous in such a a way that the subproblems are non-trivial but significantly easier than the original problem;
+\item The free decision variables should also be related, so that their solution contributes to the search.
+\end{enumerate}
+Different strategies have been developed to fulfil these goals, as discussed in the following.
+
+\paragraph{Support in an elite solution.}
+It is common to rely on the characteristics of a high-quality (i.e., \emph{elite}) solution to define the decomposition.
+For example, forming subproblems from the customers of a subset of routes selected from an elite solution guarantees that the routes that are not currently selected appear together in at least one good solution.
+This effectively intensifies the search effort around this solution.
+Using the information of a single elite solution prevents a classical pitfall of some decomposition techniques: inducing solution features (e.g., arcs) which are frequently present in good solutions but never found together (supported) in at least one good solution.
+
+Methods based in partitioning the set of customers are no exception to this concept.
+Splitting the set of customers to create two CVRP subproblems implicitly means that if two customers belong to different subproblems, then no arc can exist between them in the associated complete solution.
+Therefore, as a prerequisite for such a partition, one should be sure that at least one good solution exists without this arc.
+A similar issue occurs when decomposing a problem partitioning the customers into subsets \(V_1, \dots, V_k\) such that the minimum number of routes required in the solutions of the subproblems, \smash{\(\sum_{j=1}^k \big\lceil (\sum_{v \in V_j} q_v)/Q \big\rceil\)}, is much greater than the minimum number of routes required in a solution of the original problem, \smash{\(\big\lceil (\sum_{v \in V'} q_v)/Q \big\rceil\)}.
+High-quality complete solutions are unlikely to have such a structure because the total residual space in the vehicles is generally small.
+This can be avoided if the partition is based on routes from an elite solution.
+Alternatively, pattern mining techniques (such as frequent item sets detection) have been applied to find supported sets of decisions that permit to generate subproblems through aggregation \parencite[see, e.g.,][]{Ribeiro2006,RodriguesdeHolandaMaia2020}.
+Another approach is to reintroduce a frequent pattern through a local search move that includes a phase of reconstruction solved to optimality by an enumeration algorithm \parencite{arnold2019pils}.
+
+\paragraph{Size of the subproblems.}
+The size of the subproblems is an essential parameter to control their difficulty and potential for improvement.
+Good choices of problem size depend on the performance (run-time and solution quality) of the algorithm adopted for the subproblems.
+The aim is to choose a problem size such that the solver is able to solve the subproblems to near-optimality in a limited time.
+The size of the subproblems can stay fixed, be subject to randomisation \parencite[see, e.g.,][]{Ropke2006a}, or evolve during the search \parencite[see, e.g.,][]{Queiroga2020a} in relation to some performance metrics.
+Subproblems of fixed size are adequate in situations in which one has a precise knowledge of the capabilities of the subproblem solver.
+Adaptive schemes are useful when this information is not available or when small differences of instance characteristics can have a large impact on the performance of the solver.
+For example, when using an optimal algorithm to solve the subproblems, a difference of a few dozen customers or some structural differences in the customers' distribution can make the difference between solving the subproblems to optimality or not.
+In this case, \cite{Queiroga2020a} adopt an iterative approach in which the subproblem size is progressively increased.
+
+\paragraph{Relatedness information.}
+Subproblems should not be trivial.
+Besides an adequate choice of problem size, creating non-trivial problems usually requires selecting customers and decision variables that are related.
+\emph{Relatedness} between decision variables or customers can be measured in different ways:
+\begin{itemize}[nosep]
+  \item Spatial relatedness \parencite{Shaw1997,Taillard1993a,Ropke2006a,Groer2011,vidal2013hybrid};
+  \item Temporal relatedness, in case of time-window-constrained problems \parencite{Bent2010,Shaw1997,Ropke2006a};
+  \item Historical relatedness \parencite{Ropke2006a,Ropke2006b};
+  \item Relatedness as observed from recent solution patterns \parencite{arnold2019pils,RodriguesdeHolandaMaia2020};
+\end{itemize}
+Spatial and temporal relatedness metrics directly derive from the characteristics of the instances and measure how close in space or time two customer visits are.
+In contrast, historical and pattern relatedness examine how often certain decisions are taken together in good solutions in the search history.
+Note that some decomposition approaches rely on multiple relatedness metrics, possibly in an adaptive fashion \parencite{Ropke2006a}, and that linear combinations of these metrics can also be exploited \parencite{Shaw1998,schrimpf2000record}.
+
+\subsection{Solution techniques for the subproblems}\label{sec:solution-subproblems}
+
+Solution techniques for the subproblems can widely vary in terms of their run-time and solution quality.
+They range from simple greedy reconstruction heuristic (as is the case for most ruin-and-recreate applications) to more sophisticated metaheuristics applied recursively on the subproblems \parencite{Groer2011,vidal2013hybrid}, and from specialised enumeration techniques \parencite{arnold2019pils}, to full-blown branch-cut-and-price algorithms \parencite{Queiroga2020a}.
+
+Run-time and solution quality are intimately connected because a faster approach permits more iterations and therefore gives more chances of improvement.
+This trade-off is especially visible when observing the evolution of ruin-and-recreate approaches.
+Early work by \cite{Shaw1998} was oriented towards exact solution approaches (through constraint programming and branch-and-bound), whereas later implementations by \cite{schrimpf2000record,Ropke2006a,Ropke2006b,Christiaens2020} went the opposite way towards fast greedy reconstruction approaches.
+There is, however, a risk to reconstructing the solutions (i.e., solving the subproblems) with a simple greedy construction algorithm because the probability of producing a good solution decreases quickly with the size of the subproblems. Moreover, with the dramatic improvements of exact algorithms based on branch-price-and-cut for vehicle routing, we are currently witnessing the emergence of new decomposition algorithms exploiting exact methods for the subproblems \parencite{Queiroga2020a}.
+
+\subsection{Utilisation of subproblem solutions}
+\label{sec:use-solutions}
+
+When defining a subproblem supported in an elite solution (Section \ref{sec:info-subproblems}), it is possible to directly exploit the result to replace or improve the elite solution.
+This approach has been adopted in most heuristic decomposition strategies \parencite[see, e.g.,][]{Groer2011,vidal2013hybrid} because it permits to quickly benefit from the effort spent on the subproblems.
+There are, however, other situations in which problem attributes make it more difficult to exploit the results of decomposition.
+\cite{lahrichi2015integrative}, for example, introduced a sophisticated solution approach for a multi-depot multi-period CVRP, in which solutions of simpler CVRP subproblems are concurrently generated and integrated (i.e., combined together) to form complete solutions of the original problem. The integration step is done with a dedicated optimisation algorithm \parencite{el2015solution} which produces a solution of the original problem and aims to retain most of the characteristics of the subproblem solutions.
+
+In conclusion, considering recent work on heuristic decomposition techniques, we recommend to opt for \emph{independent} and \emph{robust} decompositions \emph{supported in elite solutions} because this greatly facilitates the use of the knowledge gained from the decomposition phases.
+We will follow this approach in the experimental studies of this paper, considering two main classes of decomposition: a partitional approach  that defines subproblems based on the routes of an elite solution (called route-based decomposition), and a coarsening approach that iteratively fixes sequences of customers (called path-based decomposition).
+For each of these decomposition approaches, we consider different notions of relatedness and different subproblem definitions.
+
+\section{Design of Experiments}
+\label{sec-experiment}
+
+To perform an experimental analysis of decomposition methods for the CVRP, we used the Hybrid Genetic Search (HGS) of \cite{vidalOR} as the underlying solver, because it is an excellent representative of modern metaheuristics for the CVRP.
+In the remainder of this section, we describe the decomposition techniques we examined in numerical experiments.
+
+\subsection{Route-based decomposition}
+\label{ssec:rbd}
+
+Our route-based decomposition methods create a set of independent subproblems $\mathcal{S} = \{S_1, \ldots, S_k\}$, solve each subproblem using a recursive call to HGS, and rebuild a solution to the original problem by merging the solutions to the subproblems.
+Each subproblem is defined by a pair $S_j = (V_j, p_j)$ where $V_j$ is a subset of customers, and $p_j$ is the number of vehicles assigned to subproblem $j$.
+Recall that the geographical coordinates $(x_v, y_v)$ of each location $v \in V$ are known.
+In addition, we assume that  \((x_0, y_0) = (0,0)\).
+
+We describe a CVRP solution as a set of routes \(\mathcal{R} = \{R_1, \ldots, R_p\}\), where each route is given as a sequence of customers \(R_i = (0, v_{i 1}, \dots, v_{i r_i}, 0)\).
+The number of customers visited by vehicle \(i\) is \(r_i\).
+For convenience, we also define the set of customers visited by vehicle \(i\) as \(W_i = \{v_{i 1}, \dots, v_{i r_i}\}\).
+If a vehicle \(i\) is not used, then \(W_i = \emptyset\) and \(r_i = 0\).
+
+In a route-based decomposition method, the vertex set \(V_j\) of each subproblem \(S_j\) is built from a subset of the routes in a given solution \(\mathcal{R}\).
+This subset is indexed by $\mathcal{I}_j \subseteq \{1, \ldots, p\}$, i.e., $V_j = \bigcup_{i \in \mathcal{I}_j} W_i$.
+We set the number of vehicles to $p_j = |\mathcal{I}_j|$ to ensure the feasibility of subproblem \(S_j\) (provided the given solution \(\mathcal{R}\) was feasible).
+The route-based decomposition methods that we study differ in how the index set $\mathcal{I}_j$ is determined.
+
+We introduce the concept of the \emph{barycentre} of a non-empty route $R_i$, which is  frequently used in the following, and defined as the point in the Euclidean space $\mathbb{R}^2$ with
+\begin{equation*}
+    b_i = (
+      b_i^{\textup{x}},
+      b_i^{\textup{y}}
+    ) = \Bigg(
+      \frac{1}{|V_i|} \sum_{v \in V_i} x_v,
+      \frac{1}{|V_i|} \sum_{v \in V_i} y_v
+    \Bigg)\mathrm{.}
+\end{equation*}
+In the following, when using barycentres to create subproblems, we disregard empty routes.
+The vehicles corresponding to such empty routes, if any, are distributed uniformly among the created subproblems.
+To increase the chances of finding a high-quality solution to the subproblems, we introduce a parameter $m \in \mathbb{N}$ that denotes a target number of customers to assign to each subproblem.
+
+\subsubsection{Random route decomposition}
+
+In \emph{random route decomposition}, the routes of \(\mathcal{R}\) are shuffled, and the resulting order is used to define subproblems.
+Starting with $j = 1$,  set $\mathcal{I}_j$ is created by adding (the indices of) routes until $\sum_{i \in \mathcal{I}_j} r_i \geq m$ (remember $r_i$ denotes the number of customers in route $R_i$).
+Then, subproblem $j$ is ``closed'', $j$ is incremented by one, and the procedure continues.
+
+\subsubsection{Barycentre swipe decomposition}
+
+Like \emph{random route decomposition}, this method first sorts the routes and then uses the resulting order to build the subproblems.
+The difference lies in how the routes are ordered, namely by increasing polar angle $\vartheta_i \in [-\pi, \pi]$ of their barycentre.
+With $\tau_i = \arctan \big| b_i^\textup{y} / b_i^\textup{x} \big|$, then the angle is
+\begin{equation*}
+  \vartheta_i = \begin{cases}
+    \tau_i & \text{ if } b_i^\textup{x} \geq 0, b_i^\textup{y} \geq 0 \\
+    \pi - \tau_i & \text{ if } b_i^\textup{x} < 0, b_i^\textup{y} \geq 0 \\
+    - \tau_i & \text{ if } b_i^\textup{x} \geq 0, b_i^\textup{y} < 0 \\
+    - \pi + \tau_i & \text{ if } b_i^\textup{x} < 0, b_i^\textup{y} < 0\mathrm{.}
+  \end{cases}
+\end{equation*}
+This method was already used in \cite{vidal2013hybrid}.
+
+\subsubsection{Quadrant decomposition}
+
+This method creates at most four subproblems, one for each quadrant, grouping together routes with the barycentre in the same quadrant.
+The method does not use parameter $m$, thus giving less control on the size of the created subproblems.
+Furthermore, for instances in which the depot lies at the bottom-left corner, the method gives a subproblem which is identical to the original problem.
+The index sets to perform decomposition are the following (we only use non-empty ones).
+\begin{align*}
+  \mathcal{I}_1 = \{ i : b_i^\textup{x} \geq 0, \; b_i^\textup{y} \geq 0 \} \\
+  \mathcal{I}_2 = \{ i : b_i^\textup{x} < 0, \;    b_i^\textup{y} \geq 0 \} \\
+  \mathcal{I}_3 = \{ i : b_i^\textup{x} \geq 0, \; b_i^\textup{y} < 0 \} \\
+  \mathcal{I}_4 = \{ i : b_i^\textup{x} < 0, \;    b_i^\textup{y} < 0 \}\mathrm{.}
+\end{align*}
+The above-described \emph{quadrant decomposition} is related to the one used by \cite{Groer2011}, with the difference that the authors divide the Euclidean plane in two halves rather than into four quadrants.
+They then assign routes to one of the two half-planes if they have at least one customer in the half-plane, leading to overlapping subproblems which need to be solved sequentially.
+We instead require that the barycentre lies in the quadrant and, therefore, our subproblems do not overlap.
+
+\subsubsection{Barycentre clustering decomposition}
+
+This method builds $k = \lceil n / m \rceil$ subproblems, by partitioning the routes into $k$ clusters and creating one subproblem for each cluster.
+To cluster together routes with nearby barycentres, we use the popular $k$-means algorithm \parencite{kmeans} using the barycentres as points.
+We use the \emph{k-means++} method \parencite{kmeans_pp} to generate the initial clustering.
+
+\subsubsection{Historical relatedness clustering decomposition}\label{sssec:hist_related}
+
+As in the previous method, we want to first build $k$ clusters of routes and then create the subproblems accordingly.
+What changes here is the clustering criterion: this method groups together routes whose customers have often been visited by the same vehicle in past solutions.
+We record all solutions produced as offspring in the HGS after they went through the local search phase.
+Let $z_{vu} \in \mathbb{N}$ be the number of times two customers $v$ and $u$ appeared in the same route in a recorded solution.
+The historical relatedness between two routes $R_i, R_{i'} \in \mathcal{R}$ is defined as
+\begin{equation*}
+  Z_{i i'} = \sum_{v \in V_i} \sum_{u \in V_{i'}} z_{vu}\textrm{.}
+\end{equation*}
+With this metric, routes with higher scores are more related to each other; by contrast, clustering algorithms assume that points within a short distance are more related.
+Therefore, we use the inverse of $Z_{i i'}$ as the distance between two routes.
+Unlike the previous method, which used points in the Euclidean space (namely, the barycentres) to represent routes, we now do not have underlying positions characterising the routes.
+Therefore, we cannot use the $k$-means algorithm (which relies on such a representation) and instead use the $k$-medoids algorithm \parencite{kmedoids}.
+
+\subsection{Path-based decompositions}\label{ssec:path-deco}
+
+A path-based decomposition method creates a smaller problem by merging groups of customers.
+We first explain how to merge the customers belonging to a single directed path T.
+Such a directed path is defined by a sequence of consecutive arcs and denoted by an ordered succession of the customers it visits: $T = (v_1, \ldots, v_{r_T})$.
+Our goal is to reduce the size of the problem by removing all customers visited by $T$ and replacing them with a single customer, which represents all customers in $T$ visited in the given order $(v_1, \ldots, v_{r_T})$.
+The new customer $v_T$ has the following characteristics.
+Its \emph{demand} is the sum of the demands of the customers it replaces, $q_{v_T} = \sum_{v \in T} q_v$.
+The \emph{travel cost} from (to) a vertex $u \in V \setminus T$ to (from) $v_T$ are, respectively,
+\begin{equation*}
+  c_{u v_T} = c_{u v_1} + \frac{1}{2} c_T \;
+  \text{ and } \;
+  c_{v_T u} = c_{v_{r_T} u} + \frac{1}{2} c_T
+\end{equation*}
+where $c_T$ is the path travel cost, defined as $c_T = \sum_{i = 2}^{r_T} c_{v_{i-1} v_i}$.
+%% ABOUT THE RED MARKS: This can seriously mess up the granular search and possibly explain the bad results of the path based decompositions. Why not simply removing this term? Anyway it's a constant. 
+
+The methods perform the decomposition by shrinking all paths of a set $\mathcal{T}$, solving the reduced subproblem, and recovering the corresponding solution for the original problem.
+Set $\mathcal{T}$ contains paths extracted from a given elite solution.
+Some of these paths might overlap or be consecutive, in which case we merge them. 
+We also exclude arcs to and from the depot.
+For example, if the paths extracted from the solution are $(0, v_1, v_2)$ and $(v_2, v_3, v_4)$ then set $\mathcal{T}$ will contain the single path $(v_1, v_2, v_3, v_4)$.
+A parameter $p_{\textup{L}}$ determines the length of the paths extracted from the solution.
+In the previous example, we have \(p_{\textup{L}} = 2\), i.e., each path contains three vertices.
+Note that when \(p_{\textup{L}} = 1\) is equal to one, single arcs are extracted.
+
+Our algorithm solves the reduced subproblem by calling HGS recursively, i.e., it solves the subproblem as a smaller CVRP in which the visiting sequence and direction of shrunken customers is fixed.
+Note that the subproblem could also be described as a capacitated arc routing problem \parencite[see][]{golden1981capacitated}, fixing the sequence of visits but not the direction, or as a capacitated clustered VRP \parencite[see][]{sevaux2008hamiltonian,Battarra2014b} not even fixing the sequence of visits.
+We, however, decided to avoid these options because they would make the decomposition method non-robust. 
+
+To devise a concrete decomposition method, we have to make two decisions:
+\begin{enumerate*}[label=(\roman*)]
+    \item how to select the paths, and
+    \item how many paths to select.
+\end{enumerate*}
+For the latter decision, we always stop selecting paths as soon as the number of customers in the resulting subproblem reaches our target number of customers $m$ (introduced in \Cref{ssec:rbd}).
+The first decision, how to select paths, differentiates the three methods described in the following.
+
+\subsubsection{Path random decomposition}
+
+\emph{Path random decomposition} takes a random sample of all $p_{\textup{L}}$-long paths used in the solution.
+To this end, the algorithm first enumerates all possible paths of length $p_{\textup{L}}$ and then samples from this set.
+
+\subsubsection{Path cost decomposition}
+
+This method first sorts all $p_{\textup{L}}$-long paths in the solution by their cost (i.e., the sum of the costs of the arcs forming the path).
+It then starts by adding them to $\mathcal{T}$ from the least to the most expensive one until reaching the stopping criterion described above.
+The idea behind this method is that short paths have a higher probability of being present in good solutions, because they visit customers which are close to each other.
+
+\subsubsection{Path relatedness decomposition}
+
+This method assigns to each $p_{\textup{L}}$-long path $T$ a score $\sum_{i=2}^{r_T} z_{v_{i-1} v_i}$ (where $z$ is defined in \Cref{sssec:hist_related}).
+The paths are then sorted in descending score order and added to $\mathcal{T}$ until reaching the stopping criterion.
+With this method, arcs connecting customers which are often consecutive in past solutions are more likely to be selected.
+
+\subsection{Integrating decomposition in HGS}
+
+\begin{algorithm}
+  \caption{Overview of HGS with decomposition.}\label{alg:hgs}
+  \begin{algorithmic}[1]
+    \State Initialise the feasible and infeasible sub-populations
+    \State Set the \emph{iteration} counter \(h \gets 0\)
+    \State Set the \emph{iterations without improvement} counter to \(l \gets 0\)
+
+    \item[]
+
+    \While{current time \(<\) time limit} \label{ln:stopping}
+      \State Increase the \emph{iteration} counter, \(h \gets h + 1\)
+      \State Select two parent individuals \(P_1, P_2\)
+      \State Generate a child individual $C$ via crossover of \(P_1\) and \(P_2\)
+      \State Execute a local search procedure to improve $C$
+      
+      \item[]
+      
+      \If{$C$ is infeasible}
+        \State Place $C$ in the infeasible sub-population
+        \State Try to repair $C$
+      \EndIf{}
+      
+      \item[]
+
+      \If{$C$ is feasible}
+        \State Place $C$ in the feasible sub-population
+        \If{$C$ is the new best individual}
+          \State Reset \emph{iterations without improvement}, \(l \gets 0\)
+        \Else{}
+          \State Increase \emph{iterations without improvement}, \(l \gets l + 1\)
+        \EndIf{}
+      \EndIf{}
+      
+      \item[]
+
+      \If{any sub-population reached its maximum size}
+        \State Select survivors in this sub-population
+      \EndIf{}
+      
+      \item[]
+
+      \If{\(l >\) parameter \(n_{\textup{imp}}\)}
+        \State Diversify population
+      \EndIf{}
+      
+      \item[]
+
+      \State Adapt penalties for infeasibilities
+
+      \item[]
+
+      \If{parameter $d$ divides \(h\) without remainder} \Comment{Decomposition phase} \label{ln:deco}
+        \State Select an elite individual $Y$ \label{ln:select_elite}
+        \State Get subproblems \(S_1, \ldots, S_k\) via decomposition based on $Y$
+
+        \item[]
+
+        \If{parameter \(w = 1\)} \label{ln:warmstart}
+          \State Warmstart each subproblem with an individual obtained from $Y$
+        \EndIf{}
+        
+        \item[]
+
+        \State Solve each subproblem calling HGS recursively (1000 generations) \label{ln:rec_call}
+        \State Build an individual $N$ from the best individual of each subproblem
+        \State Execute a local search procedure to improve $N$
+        \State Insert $N$ into the appropriate sub-population
+      \EndIf{}
+    \EndWhile{}
+
+    \item[]
+
+    \State {\bf return} the best feasible individual
+  \end{algorithmic}
+\end{algorithm}
+
+HGS is a genetic algorithm (GA) devised for a wide range of VRPs, which mainly differs from classical GAs in its advanced management of population diversity.
+The algorithm allows feasible and infeasible solutions to coexist in the population (in their respective subpopulations).
+The fitness of a solution is computed based on its cost, a penalty for possible infeasibilities, and a reward for its contribution to population diversity.
+We schematically describe HGS in \Cref{alg:hgs} and refer the reader to the work by \cite{vidalOR} for a complete description.
+
+Decomposition appears in \Cref{alg:hgs} on line \ref{ln:deco}. The algorithm starts a decomposition phase once every $d$ iterations.
+Because our decomposition methods are supported in an elite solution, we first select randomly an elite individual from  the 10\% with the lowest cost (line \ref{ln:select_elite}).
+After generating the subproblems with the chosen decomposition method, we call HGS recursively.
+As we will explain in more detail in \Cref{sec-computational}, we use a time limit in the main HGS process (line \ref{ln:stopping}), but we resort to an iteration limit in the children HGS processes (line \ref{ln:rec_call}).
+This is because it is  hard to estimate in advance how much time a subproblem needs to reach a good solution.
+
+We also investigate the impact of warmstarting the subproblems.
+Warmstarting means that we introduce an individual directly obtained from the elite solution chosen for decomposition into the initial population of the subproblem.
+For example, in a route-based decomposition method, if the algorithm creates subproblem \(S_j\) from routes \(R_1\) and \(R_2\), we can add an individual \(\{R_1,R_2\}\) and place it into the initial population.
+Because the other individuals are created with the randomised procedure of \cite{vidal2013hybrid}, it is likely that the warmstarted individual is the best one for the subproblem.
+Adding such an individual can have a considerable impact on the diversity and quality of the subproblem solutions, and we use a parameter \(w \in \{0,1\}\) to activate or deactivate warmstarting.
+
+\section{Computational analysis} \label{sec-computational}
+
+This section presents a comprehensive numerical study to assess the impact of decomposition methods on the quality of solutions produced by HGS. We study the following methods:
+\begin{itemize}
+  \item No decomposition;
+  \item Route-based methods: random route, barycentre swipe, barycentre clustering, quadrant, historical relatedness clustering.
+  \item Path-based methods: arc random, arc cost, arc history (corresponding to the methods described in \Cref{ssec:path-deco} when $p_{\textup{L}}$ is 1, i.e., considering arcs); path random, path cost, path history (similar to the previous ones, but $p_{\textup{L}}$ is 2). Preliminary experiments showed that further increasing $p_{\textup{L}}$ reduced the effectiveness of the method.
+\end{itemize}
+
+For each method, the calibration of three design parameters is required:
+\begin{enumerate*}[label=(\roman*)]
+  \item the target size of the subproblem, \(m \in \mathbb{N}\);
+  \item the number of iterations between two successive decomposition phases, \(d \in \mathbb{N}\);
+  \item whether we warmstart the subproblems by adding to their initial population the corresponding part of the elite solution (parameter \(w \in \{0,1\}\)).
+\end{enumerate*}
+To calibrate these parameters on a uniform test bed, we use the largest instances in the ``Extended Benchmark'' set proposed by \cite{uchoa2017new} (see \Cref{ssec:sensitivity_analysis}).
+These are 20 instances with 600 customers each and with the depot placed at a random point in a containing $100 \times 100$ grid.
+Moreover, 50\% of the customers are placed at random, while the other 50\% are clustered as described in \cite{uchoa2017new}.
+
+In \Cref{ssec:tests}, we compare the performance of the different decomposition methods.
+As a test set, we use the fifty largest instances of the 100-instance set introduced by \cite{uchoa2017new}, which represent a wider diversity of characteristics.
+
+\subsection{Sensitivity analysis of the parameters}\label{ssec:sensitivity_analysis}
+
+We run a sensitivity analysis to assess the impact of parameters on the decomposition methods and the relative performance of one method compared to another.
+We vary the parameters independently using a grid-search approach with \(m \in \{75, 100, 150, 200, 250, 300\}\), \(d \in \{400, 500, 1000, 2000, 5000, 7500\}\), and \(w \in \{0, 1\}\).
+The parameter grid size is 72, and we use 10 runs (with different random seeds) for each of the 20 instances and each of the 11 methods.
+
+We use a strict time limit of 1200 seconds as stopping criterion.
+When given a fixed amount of iterations in the main HGS instance, using decomposition increases the total running time because of the time spent to solve the subproblems.
+Furthermore, some decomposition methods require the algorithm to spend more time to solve subproblems than others.
+For this reason, using a maximum number of iterations would not be a fair way to compare the performance of the different methods.
+
+\begin{table}[!htbp]
+  \centering%
+  \begin{tabular}{llrrrr}
+    \toprule
+    \textbf{Decomposition} & & $m$ & $d$ & $w$ & Gap\% \\
+    \midrule
+    Barycenter clustering  & BC & 100 &  2000 & 0  & 0.345 \\
+    Barycenter swipe       & BS & 100 &  2000 & 0  & 0.371 \\
+    Historical relatedness & HR &  75 &  7500 & 0  & 0.397 \\
+    Arc random             & AR & 100 &  2000 & 0  & 0.403 \\
+    Random route           & RR & 200 &  2000 & 0  & 0.406 \\
+    Arc cost               & AC &  75 &  7500 & 0  & 0.410 \\
+    Arc history            & AH &  75 &  7500 & 0  & 0.411 \\
+    Quadrant               & Q &  200 &  7500 & 0  & 0.412 \\
+    Path history           & PH &  75 &  2000 & 0  & 0.413 \\
+    No decomposition       & N  &     &       &    & 0.413 \\
+    Path random            & PR &  75 &  5000 & 0  & 0.416 \\
+    Path cost              & PC & 100 &  7500 & 0  & 0.417 \\
+    \bottomrule
+  \end{tabular}
+  \caption{Optimal parameter configuration for each decomposition method.}\label{tbl:best_params}
+\end{table}
+
+\begin{figure}[!htb]
+  \centering%
+    \includegraphics[width=0.6\textwidth]{figures/sensitivity_analysis_gap_stderr.png}
+    \caption{Average percentage gaps to the best known solutions, on the \emph{Extended Benchmark} instances. The results refer to each decomposition method's best parameter combination. Route-based methods are in orange, path-based methods in green, no decomposition is in blue. Error bars denote the standard error of the mean.}\label{fig:sa_gap}
+\end{figure}
+%% TV -- Possible to have this figure in greyscale with a caption? (otherwise it's not easily readable when printing)
+
+\Cref{tbl:best_params} reports the results of the analysis.
+For each decomposition method, columns $m$, $d$ and $w$ report the best corresponding parameter combination, i.e., the one giving the lowest average gap with respect to the best known solutions.
+Column \emph{Gap\%} reports the obtained percentage gap.
+The results show how using decomposition generally improves the quality of the algorithm.
+Furthermore, route-based methods are superior to path-based ones, as shown by \Cref{fig:sa_gap} which reports the average gaps of column \emph{Gap\%} of \Cref{tbl:best_params}, with the addition of bars denoting the standard error of the mean.
+In the figure, route-based methods are in orange, path-based ones in green, and no decomposition is in blue.
+
+Because the error bars are overlapping for many of the methods, we confirm the validity of the obtained ranking by running Wilcoxon signed-rank tests between all pairs of decomposition methods.
+The data associated to each method is a vector of the same size as the number of instances used, in which each entry gives the average Gap\% for one instance across all reruns.
+\Cref{fig:wilco-training} reports the results of these tests where each method is represented by an oval with the same colour-coding described before.
+An arrow between two methods indicates that the method at the tail has lower gaps than the method at the head, and that the difference is significant (\(p\)-value smaller than \(0.05\)).
+The figure shows that \emph{barycentre clustering} and \emph{barycentre swipe} dominate all other methods.
+Among the remaining methods, there is only one dominance relation, between \emph{historical relatedness} and \emph{arc history}.
+
+\begin{figure}[!htb]
+  \centering%
+  \includegraphics[width=0.85\textwidth]{figures/wilcoxon-training-set.png}
+  \caption{Results of Wilcoxon signed-rank tests between each pair of methods, on the \emph{Extended benchmark} instances.
+  An arrow between two methods indicates that the method at the tail has lower gaps than the method at the head, and that the difference is significant (\(p\)-value smaller than \(0.05\)).
+  Route-based methods are in orange, path-based methods in green, no decomposition is in blue.}\label{fig:wilco-training}
+\end{figure}
+
+As these results refer to the same instances on which we tuned the parameters, we cannot rule out the effects of over-fitting.
+For this reason, we defer a detailed analysis of the merits of the single decomposition methods to \Cref{ssec:tests}, in which we test the methods on a different instance set.
+
+\begin{figure}[!htb]
+  \centering%
+  \includegraphics[width=0.6\textwidth]{figures/sensitivity_analysis_matrix.png}
+  \caption{Best algorithm and corresponding percentage gap, for each combination of parameters $m$ (on the $y$ axis) and $d$ (on the $x$ axis); parameter $w$ is fixed to value $0$.
+  The size of the gaps is given in the colour legend.}\label{fig:sa_matrix}
+\end{figure}
+% Same issue as previously, the figure is not readable if printed in black-and-white, could we use a palette such as "viridis" or "magma" that is readable in both color and B&W mode ?
+
+In the rest of this section, we examine how robust the methods are with respect to the variation of parameters $m$ and $d$.
+Because parameter $w$ was always tuned to 0, we fix its value.
+\Cref{fig:sa_matrix} shows how the best decomposition method changes when moving in the parameter space defined by $m$ (on the $y$ axis) and $d$ (on the $x$ axis).
+The size of the gaps is given in the colour legend; the abbreviations used are the ones listed in \Cref{tbl:best_params}. For parameter combinations yielding large gaps (high $m$ and low $d$), not using decomposition is nearly always the best choice.
+Note how good parameter configurations cluster around the best one (\(m = 100\), \(d = 200\)).
+The squares directly neighbouring the best decomposition in both directions of parameter variation all show a ``green'' performance, and 8 out of 9 also use \emph{barycentre clustering}, i.e., this method dominates the part of the parameter space in which decomposition pays off.
+This means that a user applying decomposition to solve a large-scale routing problem can be sufficiently confident that \emph{barycentre clustering} will improve solution quality and the user can rely on the method being not too sensitive to parameters $m$ and $d$.
+
+\subsection{Performance comparison of the decomposition methods}\label{ssec:tests}
+
+To compare the performance of the different methods, we fix the parameters of each method to the values reported in \Cref{tbl:best_params}, and we conduct experiments on the fifty largest instances of \cite{uchoa2017new}, which include between 335 and 1000 customers.
+Because this instance set is disjoint from the one used in \Cref{ssec:sensitivity_analysis}, we mitigate the effects of overfitting parameter values to specific instances.
+The stopping criterion remains set to a fixed time limit of 1200 seconds.
+
+\begin{figure}[!htb]
+    \centering%
+    \includegraphics[width=0.6\textwidth]{figures/test_gap_stderr.png}
+    \caption{Average percentage gaps to the best known solution, on \cite{uchoa2017new}'s fifty largest instances. We use each decomposition method with the parameters given in \Cref{ssec:sensitivity_analysis}. Route-based methods are in
+    orange, path-based methods in green, no decomposition is in blue. Error bars denote the standard error of the mean.}\label{fig:test_results}
+\end{figure}
+
+\Cref{fig:test_results} shows the results on this second set of instances, and the result of the corresponding Wilcoxon signed rank test are in \Cref{fig:wilco-test}.
+Percentage gaps are higher on this test set than they were on the instances used for parameter tuning.
+The difference is not only caused by the fact that one set was used for training while the current one is used as test set, but also stems from the greater difficulty of the larger instances in the test set.
+This can be seen from the comparison of the results of method \emph{no decomposition} on the two sets. 
+The results draw a very clear picture: route-based methods outperform path-based methods.
+In fact, path-based methods are not superior to using \emph{no decomposition}.
+\emph{Barycentre clustering} shows the best performance of all methods, closely followed by \emph{barycentre swipe}.
+These two methods give considerably lower gaps than all other methods.
+It should be emphasised that these findings are not mere updates or slight adjustments of knowledge from the literature.
+In fact, route-based and path-based methods have been used in the literature to similar extent.
+To our knowledge, the best-performing method, \emph{barycentre clustering}, has not been previously used in the literature.
+
+\begin{figure}[!htb]
+  \centering%
+  \includegraphics[width=0.6\textwidth]{figures/wilcoxon-test-set.png}
+  \caption{Results of Wilcoxon signed-rank tests between each pair of methods, on \cite{uchoa2017new}'s fifty largest instances.
+  An arrow between two methods indicates that the method at the tail has lower gaps than the method at the head, and that the difference is significant (\(p\)-value smaller than \(0.05\)).
+  Route-based methods are in orange, path-based methods in green, no decomposition is in blue.}\label{fig:wilco-test}
+\end{figure}
+
+Another interesting research question is how the impact of decomposition evolves during the course of the search: how much does decomposition help, and is its contribution the same at the beginning and at the end of the search?
+To answer this question, we focus on the best decomposition method, \emph{barycentre clustering}, and compare it with \emph{no decomposition}.
+Each time the best individual in the population changes (i.e., the algorithm finds a new best solution), we record the current time and if the individual comes from a standard GA operation (crossover, mutation, local search), or from the decomposition method.
+This allows us to measure precisely the contribution of the decomposition method in finding new best solutions, and how this contribution varies at different stages of the solution process.
+
+\begin{figure}[!htb]
+  \centering%
+  \includegraphics[width=0.6\textwidth]{figures/test_gap_evolution.png}
+  \caption{Solution improvement progress for \emph{barycentre clustering} and \emph{no decomposition}.
+  The CPU time has been divided into ten time intervals of \(120\;\!{\mathrm s}\), reported on the \(x\) axis.
+  The values on the $y$ axis (in log scale) denote the average gap improvement over the time intervals.
+  The bars relative to barycentre decomposition have two parts: the one in solid colour marks the contribution to gap decrease coming from standard GA operations (i.e., from cross-over, mutation, local search), the one with diagonal hatches marks the contribution coming from solving the decomposed subproblem (i.e., when the subproblem solution was better than the previous best).}\label{fig:pct_improvements}
+\end{figure}
+
+\Cref{fig:pct_improvements} shows our findings.
+On the $x$ axis, we report the run-time, divided in ten intervals from 0--10\% (corresponding to the first 120 seconds) to 90--100\%.
+The $y$ axis, in logarithmic scale, reports the gap decrease achieved in each intervals.
+Solid blue bars refer to the pure GA algorithm with no decomposition.
+Orange bars refer to the algorithm using \emph{barycentre clustering}, and are made up of two parts.
+The bottom part reports the gap decrease from GA operations, while the top part (marked with diagonal hatches) corresponds to the decrease due to decomposition.
+Note that, in most intervals, the decrease due to pure GA operations is higher for \emph{no decomposition} because more time is spent in GA iterations.
+The algorithm using \emph{barycentre clustering}, however, generally achieves greater gap reductions thanks to the decomposition phase.
+Furthermore, the contribution of the decomposition method is proportionally larger in later intervals than at the beginning: when standard GA operations start to achieve increasingly marginal returns, solving decomposed subproblems is still a good time investment.
+
+\section{Conclusions} \label{sec-conclusions}
+
+In this paper, we have reviewed the main characteristics of heuristic decomposition methods for solving large-scale VRPs and related them to key studies. We implemented a large variety of decomposition methods and conducted a systematic comparison of their performance on the CVRP benchmark set of \cite{uchoa2017new}. According to our experimental results, route-based decomposition methods generally appeared as superior to path-based methods. and \emph{barycentre clustering} (newly proposed in this paper) achieved the overall best performance and led to significant gains.
+
+This analysis has permitted to perform a structured review and comparison of many classical and new decomposition techniques, and it will be especially valuable to guide researchers and practitioners working on the solution of large-scale VRP instances.
+Nevertheless, research on heuristic decompositions remains at an early stage, and many additional developments are possible.
+In particular, the use of more sophisticated learning mechanisms \parencite{Arnold2018d} and sparsification techniques \parencite{Joshi2019a,Taillard2019} could permit a better definition of subproblems and lead to major improvements.
+Machine learning techniques could also be instrumental to quickly solve many sub-problems of moderate size \parencite{Kool2021}.
+Non-robust path-based decompositions (e.g., using free visit orientation for the aggregated sequences of visits) can lead to additional improvements on the CVRP.
+Last but not the least, the significant progress of mathematical programming algorithms for the CVRP and its subproblems suggests re-opening research lines \parencite[e.g., as in][]{Queiroga2020a} connected to the design of efficient matheuristics built on problem decompositions.
+
+\section*{Acknowledgments}
+
+Alberto Santini was supported by grant ``RTI2018-095197-B-I00'' from the Spanish Ministry of Economy and Competitiveness.
+The research of Daniele Vigo has been supported by Ministero dell'Istruzione, dell'Università e della Ricerca, Italy under grant PRIN 2015JJLC3E\_002, and by USAF under grant FA9550-17-1-0234.
+The research of Thibaut Vidal in Brazil has been supported by CAPES, by CNPq under grant 308528/2018-2, and by FAPERJ under grant E-26/202.790/2019.
+This support is gratefully acknowledged.
+
+\printbibliography
+
+\end{document}
