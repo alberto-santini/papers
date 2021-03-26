@@ -58,11 +58,11 @@
 
 \begin{abstract}
     We study a variant of the Probabilistic Travelling Salesman Problem arising when retailers crowdsource last-mile deliveries to their own customers, who can refuse or accept in exchange for a reward.
-    A planner must identify which end-of-day deliveries to offer, knowing that all deliveries need fulfilment, either via crowdsourcing or using the retailer's own vehicle.
-    We formalise the problem and position it in both the literature about crowdsourcing and among routing problems in which not all customers need a visit.
-    We show that to evaluate the objective function of this stochastic problem for even one solution, one needs to solve an exponential number of Travelling Salesman Problems.
-    To address this complexity, we propose Machine Learning and Monte Carlo simulation methods to approximate the objective function, and both a branch-and-bound algorithm and heuristics to reduce the number of evaluations.
-    We show that these approaches work well on small size instances and derive managerial insights on the economic and environmental benefits of crowdsourcing to customers.
+        A planner must identify which deliveries to offer, knowing that all deliveries need fulfilment, either via crowdsourcing or using the retailer's own vehicle.
+        We formalise the problem and position it in both the literature about crowdsourcing and among routing problems in which not all customers need a visit.
+        We show that to evaluate the objective function of this stochastic problem for even one solution, one needs to solve an exponential number of Travelling Salesman Problems.
+        To address this complexity, we propose Machine Learning and Monte Carlo simulation methods to approximate the objective function, and both a branch-and-bound algorithm and heuristics to reduce the number of evaluations.
+        We show that these approaches work well on small size instances and derive managerial insights on the economic and environmental benefits of crowdsourcing to customers.
     
     {\bf Keywords:} last-mile delivery; crowdsourcing; stochastic routing.
 \end{abstract}
@@ -74,9 +74,7 @@ One possibility is to crowdsource some deliveries through digital platforms to n
 While reducing costs and providing a source of income for people who might otherwise be off the labour market~\autocite{castillo2018crowdsourcing}, crowdsourcing also raises concerns about job quality, environmental impact~\autocite{halldorsson2010comparative} and trust~\autocite{devari2017crowdsourcing}.
 
 The main motivation for this work is to investigate the practice of \emph{crowdsourcing delivery to end customers} as a system that takes advantage of the benefits of crowdsourcing while mitigating the major associated drawbacks.
-We address the case of retail companies with physical shops that also sell online and are most interested in end-of-day deliveries, i.e., those scheduled around the time when the physical shops close.
-These constitute a sizeable part of all deliveries (in particular for groceries~\autocite{punakivi2001identifying,pan2017using}) because the delivery time coincides with most workers returning home after a workday.
-
+We address the case of retail companies with physical shops that also sell online.
 The real-life case prompting this work is, indeed, that of a supermarket chain that offers home delivery of groceries.
 In traditional LMD, a professional fleet either owned by the chain or outsourced, would deliver the groceries.
 In current crowdsourced LMD models, the chain would have a platform where potential couriers enrol, get offers for some deliveries, and accept or refuse the offers (this is the model of, e.g., Amazon Flex).
@@ -87,6 +85,8 @@ This enables us to defend a slightly different model where \emph{the crowd} is c
 Because the clients are already heading home, we reduce the number of cars associated to the ecosystem supermarket-delivery and reduce the number of miles travelled.
 Under this model, the planner offers participating clients to deliver someone else's groceries in exchange for a discount.
 Since clients can accept or refuse the offer, at the end of the day a supermarket vehicle will serve all deliveries which the planner did not \emph{crowdsource}.
+(Note that, in grocery retail, it is commonplace to schedule the supermarket vehicle tour at the end of the day, because this time coincides with most customers returning home after a workday~\autocite{punakivi2001identifying,pan2017using}.)
+
 A similar scheme was first discussed in the work of~\textcite{archetti2016vehicle}, in which the authors consider that either a professional fleet or occasional drivers can carry out deliveries, but assume that the occasional drivers will always accept offers.
 In this work we assume that each crowdsourcing fee (i.e., the compensation or discount offered to the customer) is fixed and that the probability that some customer accepts a delivery during the day, provided the decision-maker offers it, is also fixed and known.
 (We refer the reader to, e.g., the recent work of~\textcite{YILDIZ2019177} discussing optimisation models to set the fees and estimate the probabilities.)
@@ -104,7 +104,7 @@ The main contributions of this paper are the following:
 \begin{itemize}
     \item We introduce the PTSPC, a stochastic generalisation of the TSP.
     Other well-known routing problems, such as the Probabilistic TSP and the Profitable Tour Problem, are special cases of the PTSPC (see \Cref{ssec:generalisation}).
-    \item From the point of view of applications, our problem models the case of a company which wants to crowdsource its end-of-day deliveries to its own customers, who can either accept or refuse the offer.
+    \item From the point of view of applications, our problem models the case of a company that wants to crowdsource its deliveries to its own customers, who can either accept or refuse the offer.
     From a theoretical point of view, our problem occupies a novel niche in the spectrum of TSP generalisations in which the planner has intermediate power of deciding which customers to visit (see \Cref{sec:prob_desc}).
     \item We formalise this problem and show that computing the objective function of even one solution, requires solving an exponential number of TSPs (each of which is \(\mathcal{NP}\)-hard).
     Thus, we devise efficient (exact and heuristic) ways to explore the solution space and to approximate the objective value of the solutions (see \Cref{sec:algorithms}).
@@ -121,8 +121,8 @@ This problem is the \emph{Probabilistic Travelling Salesman Problem} (PTSP)~\aut
 In the PTSP a decision-maker has to devise a tour to visit a set of delivery points, some of which might be later revealed not to be available.
 Because the decision-maker does not know in advance which customers will drop out, he/she faces two options.
 \begin{itemize}
-    \item The first option, sometimes called the \emph{reoptimisation} approach, is to solve a TSP problem for each possible set of delivery points, wait until the status of all customers is revealed and use the TSP tour visiting the customers requiring delivery.
-    Using strategy is computationally expensive, but it can also be inconvenient for operational reasons; for example, if used over multiple days, it can produce every day a radically different tour while still visiting a similar set of delivery points (see, e.g.,~\autocite{consistent_vrp} for the importance of consistency in parcel delivery).
+    \item The first option is to solve a TSP problem for each possible set of delivery points, wait until the status of all customers is revealed and use the TSP tour visiting the customers requiring delivery.
+    Using this strategy is computationally expensive, but it can also be inconvenient for operational reasons; for example, if used over multiple days, it can produce every day a radically different tour while still visiting a similar set of delivery points (see, e.g.,~\autocite{consistent_vrp} for the importance of consistency in parcel delivery).
     \item A second option, called the \emph{a priori} approach, addresses this concern.
     It consists in first planning an a priori tour visiting all the customers; when the stochastic outcome is revealed, the decision-maker amends the solution skipping the deliveries that are not required, and performing the remaining ones in the same order as they appear in the a priori tour.
     This is the first approach introduced, together with the definition of PTSP, by~\textcite{jaillet1985probabilistic}.
@@ -158,9 +158,9 @@ Denote with \(O \subseteq V\) the subset of deliveries offered for crowdsourcing
 The decision-maker has to decide which deliveries to offer for crowdsourcing, i.e., the elements of \(O\), assuming that he/she will reoptimise the end-of-day tour after set \(A\) is revealed.
 In other words, the planner looks for the set \(O\) with the lowest expected cost with respect to the random variable \(A\).
 
-This approach can appear similar to the reoptimisation approach for the PTSP, but the two differ in an important aspect.
+This approach can appear similar to the first approach for the PTSP mentioned above (computing all possible tours and implementing the one corresponding to the realised customers), but the two differ in an important aspect.
 In the PTSP the decision-maker cannot affect the outcome of the random variables: he/she will wait for their realisation and then choose the tour through the customers requiring a visit.
-In short, the reoptimisation PTSP becomes equivalent to a sequence of TSPs on the operational level.
+In short, the PTSP becomes equivalent to a sequence of TSPs on the operational level.
 On the tactical level, the PTSP decision-maker can calculate the expected cost of the reoptimised tour (using a weighted average of all the tour costs) but, differently from our problem, cannot act to decrease it.
 
 \begin{figure}[htbp]\centering%
@@ -205,7 +205,7 @@ Second, and differently from most other optimisation problems, the evaluation of
 Our approach will, thus, focus on tackling both aspects.
 In \Cref{ssec:bb} we introduce an exact branch-and-bound algorithm to avoid the complete enumeration of all sets \(O \subseteq V\); in \Cref{ssec:heuristics} we propose alternative, heuristic, strategies to explore the solution space; in \Cref{ssec:approx} we propose approximation methods to efficiently estimate the value of \(\Exp{C(O)}{A}\).
 
-\subsection{Relationship with classical TSP problems}\label{ssec:generalisation}
+\subsection{Relation with classical TSP problems}\label{ssec:generalisation}
 
 The PTSPC is a generalisation of three well-studied routing problems.
 When the crowdsourcing costs are large, \(m_i = \infty \; \forall i \in V\), there is no incentive to offer any delivery for crowdsourcing and the planner will decide to perform all deliveries with the retailer's own vehicle.
@@ -213,11 +213,11 @@ In this case, the PTSPC becomes the classical {\bfseries Travelling Salesman Pro
 The reduction to the TSP also happens when all probabilities of providers accepting a crowdsourcing offer are zero, \(p_i = 0\; \forall i \in V\).    
 When there are no crowdsourcing fees, \(m_i = 0 \; \forall i \in V\), the planner will try to crowdsource all deliveries.
 At that point, the sole factor determining which deliveries to serve with the retailer's own vehicle and which not, is the stochasticity related to providers' acceptance probabilities \(p_i\).
-One thus obtains the {\bfseries Probabilistic Travelling Salesman Problem} in its reoptimisation version.
+One thus obtains the {\bfseries Probabilistic Travelling Salesman Problem}.
 When the customers always accept crowdsourcing offers, \(p_i = 1 \; \forall i \in V\), the problem reduces to the {\bfseries Profitable Tour Problem} with prizes for performing deliveries with the retailer's own vehicle equal to the savings of the corresponding crowdsourcing fees.
 
 We note that these extreme cases are interesting from a theoretical point of view, but hard to happen in practice.
-For the case study considered it is , thus, important to devise a solution method which works for the general PTSPC because reduction to other problems is unlikely.
+For the case study considered it is, thus, important to devise a solution method which works for the general PTSPC because reduction to other problems is unlikely.
 At the same time, the solution methods we devise for the PTSPC heavily address its specificity (e.g., the complexity of evaluating its objective).
 Thus, we do not expect our algorithms to be competitive with state-of-the-art methods for classical problems such as the TSP and a practitioner faced with such problems should browse the extensive existing literature on the topic.
 
@@ -245,19 +245,19 @@ In this problem, the company can decide whether to serve a delivery with a vehic
 The planner assigns deliveries to ODs which are already heading towards a destination.
 For the assignment to take place, the delivery point needs to be close to the driver's destination.
 The model works under the assumption that ODs always accept requests from the company, provided that they fulfil this ``closeness'' condition.
-This assumption is important, as optimal solutions tend to use a high percentage of available drivers.
+This assumption is important, as optimal solutions tend to use a high percentage of available ODs.
 The authors propose a Mixed-Integer Programming (MIP) formulation, but must resort to a multi-start heuristic to tackle instances with more than 25 deliveries.
-They identify three characteristics affecting the profitability of such a schema: the number of available drivers, their flexibility (how far the delivery point can be from the OD's original destination) and the compensation amount.
+They identify three characteristics affecting the profitability of such a schema: the number of available ODs, their flexibility (how far the delivery point can be from the OD's original destination) and the compensation amount.
 
 Other authors extended the VRP with ODs model to incorporate real-life features such as time windows, multiple and split deliveries~\autocite{Gui2017}, transshipment nodes~\autocite{Gui2020}, and coordinating ODs on bikes or on foot with a delivery truck from which they relay~\autocite{Kaf2017,huang2019decision}.
 The MIP model by \textcite{huang2019decision} illustrates well how even deterministic problems can be hard to solve, when they require the interaction of traditional and crowdsourced supply chain segments.
 The authors, in fact, could solve instances with up to 15 delivery points using the Gurobi solver. They could not solve any instance with 20 and 30 customers and, sometimes, after a 4-hour time limit the solver did not even provide a valid integer solution.
 
 Recent literature also addressed dynamic versions of the problem, in which delivery requests and driver availability become known during the day.
-\textcite{arslan2019} consider a real-time system in which drivers make \emph{trip announcements} and the company can then assign them pickups and deliveries which are compatible with their announced travel (i.e., involving only a small detour) and the recipients' time windows.
+\textcite{arslan2019} consider a real-time system in which ODs make \emph{trip announcements} and the company can then assign them pickups and deliveries which are compatible with their announced travel (i.e., involving only a small detour) and the recipients' time windows.
 They tackle the dynamic nature of the problem with a rolling horizon approach, corresponding to a planner who takes decisions at different moments during the day.
-The decisions consist in matching deliveries to drivers and routing the own fleet for deliveries which were not crowdsourced.
-With a simulation study the authors show how this approach can produce savings, depending on the time flexibility of the drivers and their willingness to take larger detours.
+The decisions consist in matching deliveries to ODs and routing the own fleet for deliveries which were not crowdsourced.
+With a simulation study the authors show how this approach can produce savings, depending on the time flexibility of the ODs and their willingness to take larger detours.
 They also conclude that this system is more indicated when all parcels share the same origin, such as a central depot, as this greatly reduces the cost to operate the own fleet.
 
 \textcite{Day2017} study a problem which shares some characteristic of the PTSPC.
@@ -313,11 +313,8 @@ At the root node of the tree \(O = \bar{O} = \emptyset\) and \(F = V\), while at
 Branching in the tree amounts to selecting an offer whose status is not fixed (that is, an offer in \(F\)) and creating two children nodes: one in which the delivery is offered and one in which it is not offered.
 
 The effectiveness of a B\&B algorithm depends on devising upper and lower bounds for the objective value of the problem at each node, allowing to prune large portions of the tree.
-If the lower bound of a node is larger than the best upper bound currently available, one can be sure that no solution in the subtree originating at that node will be better than the current best solution.
-Thus, one can avoid exploring that subtree.
-
-In the rest of this section we describe the lower and upper bounds we use during three exploration.
-Each node of the tree is determined by the three sets \((O, \bar{O}, F)\) described above; we denote with \(z(O, \bar{O}, F)\) the best solution in the subtree originating from node \((O, \bar{O}, F)\).
+In the rest of this section we describe the lower and upper bounds we use during tree exploration.
+Each node of the tree is determined by the three sets \((O, \bar{O}, F)\) described above; we denote with \(z(O, \bar{O}, F)\) the cost of best solution in the subtree originating from node \((O, \bar{O}, F)\), i.e., the best solution which can be obtained assigning the deliveries of \(F\) to either set \(O\) or \(\bar{O}\).
 
 \subsubsection[Lower Bound]{Lower bound \(\ubar{z}\)}\label{ssec:lb1}
 
@@ -335,7 +332,7 @@ We give a formal definition of problem \(\PTP{X,Y}\) in \Cref{app:ptpxy}, while 
     \begin{proof}
         Selecting the best set of deliveries to crowdsource, when we assume that
         \begin{enumerate*}[label=(\roman*)]
-            \item the couriers will always accept offered deliveries, and
+            \item the ODs will always accept offered deliveries, and
             \item deliveries in set \(\bar{O}\) cannot be crowdsourced,
         \end{enumerate*}
         corresponds to finding the lowest-cost tour which visits all vertices of \(\bar{O}\) (they must be visited with the retailer's own vehicles), while deciding which vertices of \(O \cup F\) to visit.
@@ -426,7 +423,7 @@ We can rewrite this problem as
 \begin{equation}
     \max_{X \supseteq \bar{O}} \Bigg\{ c_X - \sum_{i \in X} m_i \Bigg\}\mathrm{,}\label{eq:lbzprime2}
 \end{equation}
-which has the same minimiser of \eqref{eq:lbzprime} (although the two objective functions differ by a constant \(\sum_{i \in V} m_i\)).
+which has the same maximiser of \eqref{eq:lbzprime} (although the two objective functions differ by a constant \(\sum_{i \in V} m_i\)).
 The problem defined in \cref{eq:lbzprime2} is a bi-level integer optimisation problem, in which the inner problem is a TSP, required to compute \(c_X\).
 The best and, as far as we are aware, only available exact general-purpose solver for bi-level integer optimisation (that of \textcite{doi:10.1287/opre.2017.1650}) does not support dynamic cut generation schemes such as branch-and-cut.
 Therefore, we cannot model the inner TSP using an exponential number of subtour-elimination constraints, as in model \eqref{eq:tsp_obj}--\eqref{eq:tsp_end}; we must use a formulation which requires a polynomial number of variables and constraints.
@@ -448,12 +445,14 @@ The resulting problem reads as follows:
     && & x_{ij} \in \{0,1\} & \quad & \forall i,j \in \Vy' \label{eq:inner_defx} \\
     && & d_{ij} \in \{0,1\} & \quad & \forall i,j \in \Vy \label{eq:inner_defd} \\
     && & t_{ij}^k \geq 0 & \quad & \forall i,j,k \in \Vy \label{eq:inner_deft} \\
-    & y_i \in \{0,1\} && & \quad & \forall i \in V\mathrm{,} \label{eq:outer_defy}
+    & y_i \in \{0,1\} && & \quad & \forall i \in V\mathrm{.} \label{eq:outer_defy}
 \end{align}
 Model \eqref{eq:outer_obj}--\eqref{eq:outer_defy} is written for the general case of an asymmetric graph \(G\) for ease of notation.
 Binary variables \(x_{ij}\) take value 1 iff arc \((i,j)\) is used in the TSP tour, binary variables \(d_{ij}\) take value 1 iff vertex \(i\) precedes vertex \(j\) in the TSP tour, variables \(t_{ij}^k\) arise from a reformulation-linearisation strengthening of subtour-elimination constraints (see \autocite{rltbook} and \autocite{SHERALI200620}), and binary variables \(y_i\) determine whether vertex \(i\) should be included in the TSP.
 We also use notation \(\Vy = \{ i \in V \ : \ y_i = 1 \}\) and \(\Vy' = \{0\} \cup \Vy\).
-We refer the reader to the survey by \textcite{oncan2009comparative} for a description of each constraint.
+We refer the reader to the survey by \textcite{oncan2009comparative} for a complete description of each constraint.
+Here we note that constraints \eqref{eq:inner_inx} and \eqref{eq:inner_outx} are classical TSP flow constraints, constraints \eqref{eq:inner_pred1}--\eqref{eq:inner_dx2} are precedence constraints and link variables \(x\) and \(d\), while constraints \eqref{eq:inner_tx}--\eqref{eq:inner_flow2} are the multi-commodity flow constraints and link variables \(x\) and \(t\).
+
 Because solving model \eqref{eq:outer_obj}--\eqref{eq:outer_defy} is time-consuming, we only use bound \(\bar{z}'\) at the root node of the B\&B tree.
 
 \subsubsection{Overall B\&B algorithm}
@@ -476,7 +475,7 @@ Because solving model \eqref{eq:outer_obj}--\eqref{eq:outer_defy} is time-consum
                 \State \(\bar{z} \gets \bar{z}(O, \bar{O}, F)\) \Comment{Upper bound \(\bar{z}\)}
                 
                 \If{at root node}
-                    \State \(\bar{z} \gets \min \{ \bar{z}, \bar{z}'(O, \bar{O}, F)\) \Comment{Upper bound \(\bar{z}'\)}
+                    \State \(\bar{z} \gets \min \big\{ \bar{z}(O, \bar{O}, F), \bar{z}'(O, \bar{O}, F) \big\}\) \Comment{Upper bound \(\bar{z}'\)}
                 \EndIf
 
                 \If{$\bar{z} < z^*$}
@@ -527,7 +526,7 @@ An important property of \(\Exp{C(O)}{A}\) as defined in \cref{eq:exp_o}, is tha
 Thus, if at any moment during the computation of \(\Exp{C(O)}{A}\) the partial sum exceeds the current best solution cost \(z^*\), we can discard the leaf node.
 
 Another way to speed up the algorithm is to use the following bounding technique.
-Assume we store the values of \(\Exp{C(O)}{A}\) we computed during the exploration of the B\&B tree and that we are to compute \(\Exp{C(O \cup \{j\})}{A}\).
+Assume that we store the values of \(\Exp{C(O)}{A}\) which we computed during the exploration of the B\&B tree and that we are to compute \(\Exp{C(O \cup \{j\})}{A}\).
 We can first compute an upper bound without solving any TSP:
 \begin{equation}
     \Exp{C(O \cup \{j\})}{A} \leq \Exp{C(O)}{A} + 2 p_j m_j \sum_{A \subseteq O} p_{A,O} \mu_{A,j}\textrm{,} \label{eq:leaf_bound}
@@ -570,10 +569,12 @@ The following theorem proves the validity of bound \eqref{eq:leaf_bound}.
 
 Throughout the exploration of the B\&B tree, we must solve many TSPs on subgraphs induced by various subsets of \(V'\).
 For example, at each leaf node we compute \(\Exp{C(O)}{A}\) which involves solving one TSP over vertices \(V' \setminus A\) for each \(A \subseteq O\).
-Clearly one can cache the values \(c_{V' \setminus A}\) required to compute \(\Exp{C(O_1)}{A}\) (for a given set \(O_1 \subseteq V\)) and then re-use the common ones to compute \(\Exp{C(O_2)}{A}\) (for a different set \(O_2 \subseteq V\)).
+Note how one can cache the values \(c_{V' \setminus A}\) required to compute \(\Exp{C(O_1)}{A}\) (for a given set \(O_1 \subseteq V\)) and then re-use the common ones to compute \(\Exp{C(O_2)}{A}\) (for a different set \(O_2 \subseteq V\)).
+This is because the two sets \(O_1, O_2\) are likely to have common subsets \(A \subseteq O_1, O_2\) and the corresponding values of \(c_{V' \setminus A}\) shall be computed only once.
+
 However, it seems reasonable that even to evaluate one objective value \(\Exp{C(O)}{A}\), parts of the solution needed to obtain \(c_{V' \setminus A_1}\) (for some \(A_1 \subseteq O\)) could be reused to compute \(c_{V' \setminus A_2}\) (for some other \(A_2 \subseteq O\)): intuitively, TSP tours over similar subsets are likely to have subpaths in common.
 
-For this reason, we evaluate two strategies to solve the multiple TSPs required to compute \(\Exp{C(O)}{A}\):
+Following this observation, we devise and compare two strategies to solve the multiple TSPs required to compute \(\Exp{C(O)}{A}\):
 \begin{itemize}
     \item The first strategy ({\sc Concorde}) is to disregard the fact that the multiple TSPs over sets \(V' \setminus A\) are related and simply solve each of them independently.
     To this end, we use the popular TSP solver Concorde \autocite{concorde}.
@@ -581,19 +582,19 @@ For this reason, we evaluate two strategies to solve the multiple TSPs required 
     For problems of the size considered in this work, this corresponds to an increase of a factor of approximately \(1.25^{\sqrt{21}}/1.25^{\sqrt{4}} \approx 1.78\) between the solution time of the smallest non-trivial TSP (with 4 vertices) and the largest one (with 21 vertices, the size of the largest instance --- see \Cref{ssec:inst-gen}).
     As such, solving one TSP with Concorde is {\em almost} constant-time in our situation and, therefore, computing \(\Exp{C(O)}{A}\) is {\em almost} exponential-time, because it requires to solve \(2^{|O|}\) TSPs.
     \item The second strategy ({\sc HeldKarp}) is to use the classical Held-Karp Dynamic Programming (DP) algorithm \autocite{held1962dynamic} to compute \(c_{V'}\).
-    The DP algorithm is based on the following cost function: let \(X \subseteq V\) and denote with \(H(X, t)\) the cost of the shortest Hamiltonian path from 0 to \(t\) in the subgraph induced by vertices \(\{0,t\} \cup X\).
-    The cost of the optimal TSP tour over \(V'\) is then \(c_V' = H(V, 0)\) (recall that \(V = V' \setminus \{0\}\)) and the DP recursion used is:
+    The DP algorithm is based on the following cost function: let \(X \subseteq V\) and \(t \in V' \setminus X\), and denote with \(H(X, t)\) the cost of the shortest Hamiltonian path from 0 to \(t\) in the subgraph induced by vertices \(\{0,t\} \cup X\).
+    The cost of the optimal TSP tour over \(V'\) is then \(c_{V'} = H(V, 0)\) (recall that \(V = V' \setminus \{0\}\)) and the DP recursion used is:
     \begin{align}
         H(\emptyset, t) &= c_{0t} \\
         H(X, t) &= \min_{i \in X} \big\{ H(X \setminus \{i\}, i) + c_{it} \big\}\mathrm{.}
     \end{align}
     The DP table to compute \(H(V,0)\) has one column for each subset \(X \subseteq V\) and one row for each vertex \(i \in V'\); the entry in the column indexed by \(X\) and the row indexed by \(i\) is \(H(V,i)\).
     Held and Karp's algorithm is not cheap to execute: its time grows as \(O(2^n n^2)\) and its space (i.e., the size of the DP table) as \(O(2^n n)\).
-    However, once the DP table is build, one can compute \(c_X\) for any \(\{0\} \subset X \subseteq V'\) in constant time, simply accessing the entry in the column indexed by \(X\) and the row indexed by \(0\).
+    However, once the DP table is built, one can compute \(c_X\) for any \(\{0\} \subset X \subseteq V'\) in constant time, simply accessing the entry in the column indexed by \(X\) and the row indexed by \(0\).
 \end{itemize}
 In a preliminary experiment, we used 3168 instances (see \Cref{ssec:inst-gen}) with 8 to 16 delivery points, i.e., 9 to 17 TSP vertices.
 For each of them, we used strategies {\sc Concorde} and {\sc HeldKarp} to compute \(c_X\) for all subsets \(X\) of delivery points.
-The results, summarised in \Cref{fig:tsp-strategies}, suggest that using strategy {\sc HeldKarp} is less computationally expensive but much more memory hungry than strategy {\sc Concorde}, to the point of being impractical for larger instances.
+The results, summarised in \Cref{fig:tsp-strategies}, suggest that using strategy {\sc HeldKarp} is computationally less expensive but much more memory hungry than strategy {\sc Concorde}, to the point of being impractical for larger instances.
 For this reason, we resort to using strategy {\sc Concorde} in the computational experiments of \Cref{sec:cres}.
 
 \begin{figure}[htbp]\centering
@@ -790,9 +791,9 @@ We also note that all methods perform generally well, with the central quartiles
 
 \section{Computational study}\label{sec:cres}
 
-After describing the instance generation method we used, we propose two main analyses of results.
+After describing the instance generation method that we used, we propose two main analyses of results.
 The first aims at understanding how market environment factors, such as the willingness of customers to accept offers or the crowdsourcing fee amounts, affect planner's profitability and environmental sustainability.
-The indicator of profitability we use are the savings that the planner achieves when allowing crowdsourcing vs.\ when serving all deliveries with the retailer's own vehicle.
+The indicator of profitability that we use are the savings that the planner achieves when allowing crowdsourcing vs.\ when serving all deliveries with the retailer's own vehicle.
 (The cost incurred when serving all deliveries with the own vehicle is the cost of the optimal TSP tour over all delivery points.)
 The indicator of sustainability is the number of miles saved by the retailer's own vehicle when crowdsourcing.
 This metric assumes that customers who accept to perform deliveries and use a carbon-emitting mean of transport, only apply a minimal detour to their originally planned routes.
@@ -836,10 +837,11 @@ Analogously, one can use the {\itshape direct proportional} criterion for probab
     \caption{Percentage of deliveries offered and percentage savings compared to no crowdsourcing (i.e., using the retailer's own vehicle for all deliveries), as a function of the instance generation parameters.}\label{fig:solution-analysis}
 \end{figure}
 
-\Cref{fig:solution-analysis} shows how two metrics vary with the instance generation parameters.
-Such parameters are the {\em base probability} \(p\), the {\em base fee} \(m\), and the criteria used to generate the other probabilities and fees (see \Cref{ssec:inst-gen}).
-The first metric is the percentage of deliveries offered, \(100 \cdot \frac{|O^{\text{opt}}|}{|V|}\) (reported on the left \(y\) axis);
+Next, we consider two relevant metrics and evaluate how they vary with the instance generation parameters.
+The first metric is the percentage of deliveries offered, \(100 \cdot \frac{|O^{\text{opt}}|}{|V|}\) (reported on the left \(y\) axis in \Cref{fig:solution-analysis});
 the second is the percentage savings when using crowdsourcing, \(100 \cdot \frac{\Exp{C(O^{\text{opt}})}{A} - c_{V'}}{c_{V'}}\) (reported on the right \(y\) axis).
+The two leftmost charts in \Cref{fig:solution-analysis} show how the two metrics vary with parameters \(p\) and \(m\), the {\em base probability} and {\em base fee}, respectively.
+The two rightmost chart, report the variation of the two metrics depending on the criteria used to generate the other probabilities and fees (see \Cref{ssec:inst-gen}).
 The figure reports the average of such metrics, over all instances which share the same instance generation parameters.
 
 As expected, increasing the base probability has a large impact on the solution: it yields larger offered sets and increased savings.
@@ -855,7 +857,7 @@ The specific relation between an increase in the fee and the corresponding incre
 Therefore, although the planner should estimate this relation based on empirical data, as a rule of thumb we notice that the same relative variation applied to probabilities has a larger effect than applied to fees.
 For example, increasing the base probabilities by \(+40\%\) (from \(0.25\) to \(0.35\)) causes an increase in savings of \(42\%\) (from \(6.53\%\) to \(9.25\%\)).
 But a similar \(+40\%\) increase in the base fees (from \(2.5\) to \(3.5\)) only decreases the savings by \(15\%\) (from \(10.88\%\) to \(9.29\%\)).
-As such, if the relationship between offered fee and acceptance probability were roughly linear in this interval, we would have a net \(+27\%\) increase in savings under the high-fee/high-probability scenario compared to the low-fee/low-probability one.
+As such, if the relation between offered fee and acceptance probability were roughly linear in this interval, we would have a net \(+27\%\) increase in savings under the high-fee/high-probability scenario compared to the low-fee/low-probability one.
 Because the critical part of the sigmoid elasticity curve is approximately linear, such an analysis seems plausible.
 
 The two considered metrics are also stable when aggregating by the probability type and fee type parameters, with variations within 1--2 percentage points.
@@ -868,7 +870,7 @@ This suggests that the advantages a planner can get by crowdsourcing last-mile d
     Whiskers extend to the rest of the distribution, except for outliers which are marked by fliers.}\label{fig:miles-saved}
 \end{figure}
 
-While the above analysis justifies the economical benefits of crowdsourcing end-of-day last-mile deliveries, we also investigate on potential environmental benefits, in terms of miles saved.
+While the above analysis justifies the economical benefits of crowdsourcing last-mile deliveries, we also investigate on potential environmental benefits, in terms of miles saved.
 Let \(M_{\text{PTSPC}}\) be the length of the tour of the retailer's own vehicle in an optimal solution to the PTSPC and \(M_{\text{TSP}}\) be the length of the optimal Travelling Salesman tour for the same instance.
 We define the (percentage) miles saved as \(100 \cdot \frac{M_{\text{TSP}} - M_{\text{PTSPC}}}{M_{\text{TSP}}}\).
 Note that, by definition, the miles saved only depend on the probabilities \(p_i\) and not on the amount of fees \(m_i\).
@@ -957,9 +959,9 @@ When not using \(\bar{z}'\), the algorithm closes all instances up to size 12; o
 For these latter instances, the algorithm still has large gaps at the end of the runtime (rows ``Gap\%'').
 However, because we know (via enumeration) the cost of the optimal solution, we can also give a measure of the quality of the best feasible solution found within the time limit in rows ``OptGap\%''.
 In this case, we see that the B\&B algorithm finds high quality solution, all within \(0.10\%\) of the optimal on average.
-B\&B, thus, identifies low cost solutions but has more trouble to prove the optimality (or even the quality) of these solutions because of loose lower bounds.
+B\&B, thus, identifies low cost solutions but struggles proving the optimality (or even the quality) of these solutions because of loose lower bounds.
 When using bound \(\bar{z}'\) computation times increase slightly for the smaller instance sizes.
-The gaps, however, improve and the algorithm closes all instances up to size 13, while it cannot solve to optimality any instance of size 18 an above.
+The gaps, however, improve and the algorithm closes all instances up to size 13, while it cannot solve to optimality any instance of size 18 and above.
 For smaller instances which are solved within the time limit, using \(\bar{z}'\) allows to explore fewer nodes before reaching the provably optimal solution.
 For larger instances, on the other hand, the algorithm explores more nodes before the time limit hits, because the tighter bound allows to enter a node and prune it quickly in more occasions.
 In general, the gaps with the optimal solution (row ``OptGap\%'') remain small, because they are more influenced by lower rather than upper bounds.
@@ -1000,7 +1002,7 @@ We attribute this phenomenon to the shape of the objective function of our probl
 The figure reports the gap between the objective value of generic sets \(O\) and the optimal set \(O^{\text{opt}}\), averaged over all sets \(O\) of sizes between \(|O^{\text{opt}}| -5\) and \(|O^{\text{opt}}| + 5\) and over all instances.
 Note that the median gap for size difference \(0\), i.e., for sets \(O\) of the same size as \(O^{\text{opt}}\), lies well below \(5\%\).
 Considering that the heuristics build sets which are locally optimal, in light of \Cref{fig:landscape}, it is less surprising that they manage to keep the average gaps below \(1\%\).
-To summarise, it seems important to determine how many customers should be offered for crowdsourcing  and, once this is established, one can get further saving by carefully choosing {\em which} customers to crowdsource.
+To summarise, it seems important to determine how many customers should be offered for crowdsourcing  and, once this is established, one can get further savings by carefully choosing {\em which} customers to crowdsource.
 This is a fact which we can exploit to devise further heuristics, as we discuss in \Cref{sec:conclusions}.
 
 \begin{figure}[htb]
@@ -1015,7 +1017,7 @@ This is a fact which we can exploit to devise further heuristics, as we discuss 
 
 \Cref{tbl:comp-results} also shows that there is a sharp drop in the number of instances for which the heuristic algorithms find the optimal solution (rows ``Closed\%''), once the instance size reaches value \(18\).
 
-Regarding run times, even the fastest of the two stepwise heuristics (F-step) takes an average of roughly 20 minutes for the largest instances and can be impractical to use in real-life decision support tools.
+Regarding run times, even the fastest of the two stepwise heuristics (F-step) takes an average of roughly 20 minutes for the larger instances and can be impractical to use in real-life decision support tools.
 Using the bidirectional heuristics BF-bid and FB-bid increases the run times even further, while providing little improvement in terms of solution quality.
 Therefore, in the last two groups of rows, we focus on speeding up the solution times: because the F-step heuristic is the fastest of the four and produces high quality solutions, we use it as a base and replace the exact evaluation of \(\Exp{C(O)}{A}\) with its estimation using Monte Carlo (algorithm F-MC20) and Machine Learning (algorithm F-ML) estimators.
 For consistency with the other results, OptGap\% will use the true value of the objective function of the set returned by the algorithms (calculated {\em a posteriori}), even if the algorithms themselves use its approximation.
@@ -1060,9 +1062,9 @@ Finally, we proposed two methods to approximate the objective function of our pr
 Because computing the cost of one solution involves solving an exponential number of TSPs, such approximations give dramatic speed-ups in run times.
 The Monte Carlo simulation method runs under two seconds, and the Machine Learning method gives an almost constant-time algorithm, whose time limit can be set by the user (we used five minutes in our experiments).
 The interesting property of such approximations is that they have little impact on the solution quality, compared to the heuristic algorithm to which we applied them.
-For example, using the F-MC20 algorithm, one could build a real-time decision support tools which enables decision-makers to perform extensive scenario analyses.
+For example, using the F-MC20 algorithm, one could build a real-time decision support tool which enables decision-makers to perform extensive scenario analyses.
 
-An analysis of synthetic instances shows that crowdsourcing end-of-day deliveries has the potential to both achieve savings and to reduce the total miles travelled by vehicles, contributing to a more sustainable last-mile supply chain.
+An analysis of synthetic instances shows that crowdsourcing deliveries has the potential to both achieve savings and to reduce the total miles travelled by vehicles, contributing to a more sustainable last-mile supply chain.
 Moreover, using customers as occasional drivers can reduce the negative effects of current outsourcing policies, increase trust and promote social engagement.
 In the future, we also plan to extend our study to applications beyond LMD, e.g., in social care problems where pharmacies ask their customers to deliver medicines to their elderly neighbours.
 
@@ -1079,7 +1081,7 @@ The other authors are partially funded by the ERDF – European Regional Develop
 \section{Definition of \texorpdfstring{\(c_X\)}{cX}}\label{app:tsp}
 
 We formalise the TSP problem, which we must solve to obtain cost \(c_X\) for a given subset of vertices \(X\) (\(\{0\} \subseteq X \subseteq V\).
-Let, \(E_X \subseteq E\) be the subset of edges with both endpoints in \(X\).
+Let \(E_X \subseteq E\) be the subset of edges with both endpoints in \(X\).
 Then \(c_X\) is defined as the cost of the optimal solution to the following TSP problem:
 \begin{align}
     c_X = \min  \quad & \sum_{\{i,j\} \in E_X} c_{ij} w_{ij} \label{eq:tsp_obj} \\
@@ -1099,7 +1101,7 @@ A solution to the PTP is a simple tour starting and ending at the depot and poss
 The profit of a tour is the difference between the prizes collected at vertices visited by the tour, and the travel costs of the edges comprising the tour.
 The PTP asks to find the tour with the highest profit.
 
-We are interested in a generalisation of the PTP, in which \(U\) is partitioned into two sets, \(X\) and \(U \setminus X\), and we require the tour to visit all vertices of \(X\).
+We are interested in a generalisation of the PTP in which \(U\) is partitioned into two sets, \(X\) and \(U \setminus X\), and we require the tour to visit all vertices of \(X\).
 We can solve our version of the problem with an Integer Programme (IP), introducing two sets of variables:
 \(v_i \in \{0,1\}\) which takes value 1 iff the tour visits vertex \(i \in U'\), and \(w_{ij} \in \{0,1\}\) iff the tour uses edge \(\{i,j\} \in D\).
 A model for the problem is, then:
@@ -1118,5 +1120,4 @@ We denote with \(\PTP{X, U \setminus X}\) the objective value of the optimal sol
 We point out that one needs not solve \eqref{eq:ptp_obj}--\eqref{eq:ptp_end} as an IP.
 In fact, we use the transformation of the PTP into an Asymmetric TSP on an extended graph proposed by \textcite{volgenant1987some}.
 In the notation used in~\autocite[Sec.~2.2]{feillet2005traveling}, we can impose the condition that the tour visits delivery locations \(X\) by skipping the creation, in the extended graph, of vertices of type \(v_{n+i}\) for all \(v_i \in X\).
-
 \end{document}
