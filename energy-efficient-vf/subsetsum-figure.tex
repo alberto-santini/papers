@@ -1,0 +1,70 @@
+\begin{tikzpicture}
+    \node[align=right] at (-.2,-1) {Depot};
+    \node[align=right] at (-.2,1) {Shelf};
+    \node[align=right] at (-.2,2) {$\Omega$};
+    
+    \draw[dashed,lightgray] (-1,1.5) -- (29,1.5);
+    
+    \node at (1,2) {1};
+    \node at (3,2) {$\cdots$};
+    \node at (5,2) {$b_{\pi_1} + 1$};
+    \node at (7,2) {$\cdots$};
+    \node at (9,2) {$2 b_{\pi_1} + 1$};
+    \node at (11,2) {$\cdots$};
+    \node at (13,2) {$2 b_{\pi_1} + b_{\pi_2} + 1$};
+    \node at (15,2) {$\cdots$};
+    \node at (17,2) {$2 b_{\pi_1} + 2 b_{\pi_2} + 1$};
+    \node at (19,2) {$\cdots$};
+    \node at (21,2) {$2c + 1$};
+    \node at (23,2) {$2c + 2$};
+    \node at (24.5,2) {$2c + 3$};
+    \node at (26.5,2) {$2c + 4$};
+    \node at (28,2) {$\cdots$};
+    
+    \tikzset{albrect/.style={fill=lightgray,draw=black,line join=round}}
+    
+    \node[albrect] (p1d) at (1,-1) {$\pi_1$};
+    \node[albrect] (p5d) at (5,-1) {$\pi_1$};
+    \node[albrect] (p5s) at (5,1) {$\pi_1$};
+    \node[albrect] (p9d) at (8.5,-1) {$\pi_1$};
+    
+    \node[albrect] (p9d2) at (9.5,-1) {$\pi_2$};
+    \node[albrect] (p13d) at (13,-1) {$\pi_2$};
+    \node[albrect] (p13s) at (13,1) {$\pi_2$};
+    \node[albrect] (p17d) at (16.5,-1) {$\pi_2$};
+    
+    \node[albrect] (p17d2) at (17.5,-1) {$\pi_3$};
+    
+    \node[albrect] (p21d) at (20.5,-1) {$\pi_{j-1}$};
+    
+    \node[albrect] (p21d2) at (21.5,-1) {$\pi_j$};
+    \node[albrect] (p22d) at (23,-1) {$\pi_j$};
+    \node[albrect] (p22s) at (23,1) {$\pi_j$};
+    \node[albrect] (p24s) at (24.5,1) {$\pi_j$};
+    \node[albrect] (p24d) at (24.5,-1) {$\pi_j$};
+    \node[albrect] (p25d) at (26,-1) {$\pi_j$};
+    
+    \node[albrect] (p25d2) at (27,-1) {$\pi_{j+1}$};
+    
+    \draw[->,thick] (p1d.east) -- (p5d.west);
+    \draw[->,thick] ($(p5d.north) - (.2,0)$) -- ($(p5s.south) - (.2,0)$);
+    \draw[->,thick] ($(p5s.south) + (.2,0)$) -- ($(p5d.north) + (.2,0)$);
+    \draw[->,thick] (p5d.east) -- (p9d.west);
+    
+    \draw[->,thick] (p9d2.east) -- (p13d.west);
+    \draw[->,thick] ($(p13d.north) - (.2,0)$) -- ($(p13s.south) - (.2,0)$);
+    \draw[->,thick] ($(p13s.south) + (.2,0)$) -- ($(p13d.north) + (.2,0)$);
+    \draw[->,thick] (p13d.east) -- (p17d.west);
+    
+    \draw[->,thick,dashed] (p17d2.east) -- (18.5,-1);
+    
+    \draw[->,thick,dashed] (19.5,-1) -- (p21d.west);
+    
+    \draw[->,thick] (p21d2.east) -- (p22d.west);
+    \draw[->,thick] (p22d.north) -- (p22s.south);
+    \draw[->,thick] (p22s.east) -- (p24s.west);
+    \draw[->,thick] (p24s.south) -- (p24d.north);
+    \draw[->,thick] (p24d.east) -- (p25d.west);
+    
+    \draw[->,thick,dashed] (p25d2) -- (28,-1);
+\end{tikzpicture}

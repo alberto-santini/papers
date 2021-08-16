@@ -1,0 +1,48 @@
+\begin{tikzpicture}
+    \tikzset{shelf/.style={fill=lightgray,draw=black,line join=round}}
+    \tikzset{elevator/.style={fill=Cerulean,draw=black,line join=round}}
+    \begin{scope}[canvas is xz plane at y=0]
+        \path[shelf,shade] (0,0) rectangle (2,4);
+    \end{scope}
+    \begin{scope}[canvas is xz plane at y=1]
+        \path[shelf,shade] (0,0) rectangle (2,4);
+    \end{scope}
+    \begin{scope}[canvas is xz plane at y=2]
+        \path[shelf,shade] (0,0) rectangle (2,4);
+    \end{scope}
+    \begin{scope}[canvas is xz plane at y=3]
+        \path[shelf,shade] (0,0) rectangle (2,4);
+    \end{scope}
+    \begin{scope}[canvas is xz plane at y=4]
+        \path[shelf,shade] (0,0) rectangle (2,4);
+    \end{scope}
+    \begin{scope}[canvas is xz plane at y=5]
+        \path[shelf,shade] (0,0) rectangle (2,4);
+    \end{scope}
+    \begin{scope}[canvas is xy plane at z=0]
+        \draw (2,-1) -- (2,5);
+    \end{scope}
+    \begin{scope}[canvas is xy plane at z=4]
+        \draw (2,-1) -- (2,5);
+    \end{scope}
+    \begin{scope}[canvas is xy plane at z=4]
+        \draw (0,-1) -- (0,5);
+    \end{scope}
+    \node[yshift=-15] at (-1.5,0,2) {depot};
+    \node[yshift=-15] at (-1.5,1,2) {shelf 1};
+    \node[yshift=-15] at (-1.5,2,2) {shelf 2};
+    \node[yshift=-15] at (-1.5,3,2) {shelf 3};
+    \node[yshift=-15] at (-1.5,4,2) {shelf 4};
+    \node[yshift=-15] at (-1.5,5,2) {shelf 5};
+
+    \begin{scope}[canvas is xy plane at z=2]
+        \draw[<-,dashed] (4,-1) -- (4,2.5);
+    \end{scope}
+    \begin{scope}[canvas is xz plane at y=2.5]
+        \draw[elevator] (3,0) rectangle (5,4);
+    \end{scope}
+    \begin{scope}[canvas is xy plane at z=2]
+        \draw[->,dashed] (4,2.5) -- (4,5);
+    \end{scope}
+    \node at (6,2.5,2) {elevator};
+\end{tikzpicture}
